@@ -33,6 +33,9 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.test.ts",
+    "../shared/**/*.test.ts",
+    "src/server/fake-services.ts"
   ]
 }
