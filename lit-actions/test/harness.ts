@@ -103,10 +103,16 @@ export async function runAction(source: string, params: unknown, opts: RunOption
   return record;
 }
 
-/** Call the action's own canonical() function on a value, inside its sandbox. */
-export function actionCanonical(source: string, value: unknown): string {
+/** Call one of the action's own top-level helpers (e.g. canonical) on a value, inside its sandbox. */
+export function callActionFunction(source: string, name: string, value: unknown): unknown {
+  if (!/^[A-Za-z_$][\w$]*$/.test(name)) throw new Error("bad function name");
   const context = sandbox({ nowSec: 0 }, { output: undefined, fetches: [], decrypts: [], keyRequests: 0, logs: [] });
   vm.runInContext(source, context);
   context.__value = JSON.stringify(value);
-  return vm.runInContext("canonical(JSON.parse(__value))", context);
+  return JSON.parse(JSON.stringify(vm.runInContext(`${name}(JSON.parse(__value))`, context)));
+}
+
+/** Call the action's own canonical() function on a value, inside its sandbox. */
+export function actionCanonical(source: string, value: unknown): string {
+  return callActionFunction(source, "canonical", value) as string;
 }

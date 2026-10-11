@@ -8,8 +8,13 @@
   "engines": {
     "node": ">=22.18"
   },
+  "workspaces": [
+    "web"
+  ],
   "scripts": {
     "test": "vitest run",
+    "dev": "npm run web:sync && npm run dev -w web",
+    "web:sync": "node scripts/sync-web.ts",
     "lit:cids": "node scripts/m1/print-cids.ts",
     "lit:account": "node --env-file-if-exists=.env.local scripts/m1/check-account.ts",
     "lit:probe": "node --env-file-if-exists=.env.local scripts/m1/run-probes.ts",

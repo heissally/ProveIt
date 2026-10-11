@@ -1,12 +1,12 @@
 /**
  * Loads and checks registry/servers.json: the official Discord servers ProveIt
- * can check, and which role IDs count as Admin, Mod, Team or Support.
+ * can check, and which role IDs count as Admin or Mod.
  */
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { REPO_ROOT } from "./lit-api.ts";
 
-export const ROLE_LABELS = ["Admin", "Mod", "Team", "Support"] as const;
+export const ROLE_LABELS = ["Admin", "Mod"] as const;
 const SNOWFLAKE = /^\d{17,20}$/;
 
 export interface RegistryServer {

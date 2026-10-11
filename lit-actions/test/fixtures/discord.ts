@@ -14,7 +14,8 @@ export const CLIENT_SECRET = "discord-test-client-secret-never1";
 export const REDIRECT_URI = "http://localhost:3000/callback/discord";
 export const GUILD_ID = "1100000000000000001";
 export const OTHER_GUILD_ID = "1100000000000000999";
-export const ROLE = { admin: "1200000000000000001", mod: "1200000000000000002", team: "1200000000000000003", support: "1200000000000000004", artist: "1200000000000000099" };
+// admin and mod are registered; team and artist are real roles in the server that ProveIt does not count.
+export const ROLE = { admin: "1200000000000000001", mod: "1200000000000000002", team: "1200000000000000003", artist: "1200000000000000099" };
 
 export const TEST_CONFIG = {
   clientId: CLIENT_ID,
@@ -24,7 +25,7 @@ export const TEST_CONFIG = {
   servers: {
     [GUILD_ID]: {
       name: "Lit Protocol",
-      roles: { [ROLE.admin]: "Admin", [ROLE.mod]: "Mod", [ROLE.team]: "Team", [ROLE.support]: "Support" },
+      roles: { [ROLE.admin]: "Admin", [ROLE.mod]: "Mod" },
     },
   },
 };
@@ -45,13 +46,13 @@ export function params(overrides: Record<string, unknown> = {}) {
     redirectUri: REDIRECT_URI,
     challengeId: CHALLENGE_ID,
     guildId: GUILD_ID,
-    roles: ["Mod", "Team"],
+    roles: ["Admin", "Mod"],
     expiresAt: NOW + 14 * 60,
     ...overrides,
   };
 }
 
-export function tokenResponse(scope = "identify guilds guilds.members.read"): FakeResponse {
+export function tokenResponse(scope = "identify guilds.members.read"): FakeResponse {
   return {
     status: 200,
     body: { access_token: ACCESS_TOKEN, token_type: "Bearer", expires_in: 604800, refresh_token: REFRESH_TOKEN, scope },
@@ -74,19 +75,11 @@ export function memberResponse(roleIds: string[]): FakeResponse {
 
 export const notMemberResponse: FakeResponse = { status: 404, body: { message: "Unknown Guild", code: 10004 } };
 
-export function guildsResponse(entries: Array<{ id: string; owner: boolean }>): FakeResponse {
-  return {
-    status: 200,
-    body: entries.map((e) => ({ id: e.id, name: "Some server", icon: null, owner: e.owner, permissions: "0", features: [] })),
-  };
-}
-
-/** Route fake requests to Discord's token, @me, member and guilds endpoints. */
+/** Route fake requests to Discord's token, @me and member endpoints. Anything else (e.g. the server list) is an error. */
 export function fakeDiscord(opts: {
   token?: FakeResponse | Error;
   me?: FakeResponse | Error;
   member?: FakeResponse | Error;
-  guilds?: FakeResponse | Error;
 }): FakeFetch {
   return (url, init) => {
     const answer = (a: FakeResponse | Error | undefined) => {
@@ -99,7 +92,6 @@ export function fakeDiscord(opts: {
     if (init.headers?.Authorization !== `Bearer ${ACCESS_TOKEN}`) return { status: 401, body: { message: "401: Unauthorized", code: 0 } };
     if (url === `${api}/users/@me`) return answer(opts.me);
     if (url === `${api}/users/@me/guilds/${GUILD_ID}/member`) return answer(opts.member);
-    if (url === `${api}/users/@me/guilds`) return answer(opts.guilds);
     throw new Error(`unexpected request to ${url}`);
   };
 }

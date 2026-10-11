@@ -102,5 +102,5 @@ console.log(`     · tick   proveit-${method} ${cid.slice(0, 8)}`);
 if (retire) console.log(`     · untick proveit-${method} ${retire.slice(0, 8)} (the old version)`);
 console.log("     · untick proveit-encrypt-secret (tick it again only when changing the secret)");
 console.log("     · leave only the " + method + " safe ticked under PKP IDs permitted. Save.");
-const tryArgs = method === "google" ? "--domain <company domain>" : "--roles Mod,Team   (or --roles Owner)";
+const tryArgs = method === "google" ? "--domain <company domain>" : "--roles Mod   (or --roles Admin,Mod)";
 console.log(`  3. Wait about a minute, then test it: npm run ${method}:try -- ${tryArgs}\n`);

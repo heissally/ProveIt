@@ -19,8 +19,10 @@ describe("parseRegistry", () => {
     expect(() => parseRegistry(reg({ guildId: "", name: "", officialSource: "", roles: {} }))).toThrow(/guildId must be the server ID/);
   });
 
-  it("rejects a label other than Admin, Mod, Team or Support", () => {
-    expect(() => parseRegistry(reg({ ...good, roles: { "1200000000000000003": "Moderator" } }))).toThrow(/must be one of Admin, Mod, Team, Support/);
+  it("rejects any label other than Admin or Mod", () => {
+    for (const label of ["Moderator", "Team", "Support", "Owner"]) {
+      expect(() => parseRegistry(reg({ ...good, roles: { "1200000000000000003": label } }))).toThrow(/must be one of Admin, Mod/);
+    }
   });
 
   it("rejects the @everyone role (its ID equals the server ID), since everyone has it", () => {

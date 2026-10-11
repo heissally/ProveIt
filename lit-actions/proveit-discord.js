@@ -5,13 +5,13 @@
 //   2. LIT: open the PKP safe that holds our Discord client secret
 //   3. trade the one-time sign-in code for a Discord access token, directly over TLS
 //   4. ask Discord who signed in (user ID and username)
-//   5. ask Discord for that account's roles in that one server, or if it owns it
+//   5. ask Discord for that account's roles in that one server
 //   6. LIT: sign the result with this action's own key
 // The username and user ID are returned ON PURPOSE, so the asker can check it is the
 // exact account messaging them. Nothing else is returned, and never the token.
 //
 // js_params: { code, codeVerifier, redirectUri, challengeId, guildId, roles, expiresAt }
-//   roles: the labels that count, e.g. ["Mod", "Team"] or ["Owner"]
+//   roles: the labels that count: ["Mod"], ["Admin"] or ["Admin", "Mod"]
 
 // ---- ProveIt config: public values only, written by scripts/deploy-action.ts ----
 const CONFIG = {
@@ -26,7 +26,7 @@ const CONFIG = {
       "name": "heis_sallyy's server",
       "roles": {
         "1558833453292724345": "Mod",
-        "1558833614886801458": "Team"
+        "1558963704240930896": "Admin"
       }
     }
   }
@@ -36,12 +36,9 @@ const CONFIG = {
 const RESULT_TYPE = "proveit.result.v1";
 const MAX_LINK_LIFETIME_SEC = 15 * 60;
 const CLOCK_SKEW_SEC = 60;
-const LABELS = ["Owner", "Admin", "Mod", "Team", "Support"]; // also the order roles are listed in
-// Ask only for what the claim needs: roles need "guilds.members.read" (one server); "Owner"
-// needs "guilds" (the server list, the only place Discord says who owns a server).
-const scopesFor = (roles) => ["identify"]
-  .concat(roles.some((l) => l !== "Owner") ? ["guilds.members.read"] : [])
-  .concat(roles.includes("Owner") ? ["guilds"] : []);
+const LABELS = ["Admin", "Mod"]; // also the order claimed roles are listed in
+// Who you are, and your member info (roles) in servers. Never the list of your servers.
+const SCOPES = ["identify", "guilds.members.read"];
 const API = "https://discord.com/api/v10";
 const UA = { "User-Agent": "ProveIt/0.1 (Lit Action)" };
 const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
@@ -80,31 +77,15 @@ async function main(params) {
   }
   const who = { ...base, subject: { discordUserId: me.body.id, discordUsername: me.body.username } };
 
-  // Roles: Discord returns role IDs only; the registry says which IDs mean what.
-  const roleLabels = input.roles.filter((l) => l !== "Owner");
-  let isMember = null;
-  if (roleLabels.length > 0) {
-    const member = await discordGet(`/users/@me/guilds/${input.guildId}/member`, token.accessToken);
-    if (member.status === 404) isMember = false;
-    else if (!member.ok || !Array.isArray(member.body.roles)) return fail(`discord_member_${member.status}`);
-    else {
-      isMember = true;
-      const held = member.body.roles.map((id) => (has(server.roles, id) ? server.roles[id] : null));
-      const proven = roleLabels.find((l) => held.includes(l));
-      if (proven) return sign({ ...who, provenRole: proven }, "verified", "ok");
-    }
-  }
-
-  // Server owner: only the list of the user's servers says who owns which.
-  if (input.roles.includes("Owner")) {
-    const guilds = await discordGet("/users/@me/guilds", token.accessToken);
-    if (!guilds.ok || !Array.isArray(guilds.body)) return fail(`discord_guilds_${guilds.status}`);
-    const g = guilds.body.find((x) => x && x.id === input.guildId);
-    if (g && g.owner === true) return sign({ ...who, provenRole: "Owner" }, "verified", "ok");
-    if (isMember === null) isMember = Boolean(g);
-    if (isMember && roleLabels.length === 0) return sign(who, "not_verified", "not_owner");
-  }
-  return sign(who, "not_verified", isMember ? "role_missing" : "not_member");
+  // Roles in this one server. Discord returns role IDs only; the registry says which
+  // IDs mean what, so a role merely NAMED "Mod" in a copycat server never counts.
+  const member = await discordGet(`/users/@me/guilds/${input.guildId}/member`, token.accessToken);
+  if (member.status === 404) return sign(who, "not_verified", "not_member");
+  if (!member.ok || !Array.isArray(member.body.roles)) return fail(`discord_member_${member.status}`);
+  const held = member.body.roles.map((id) => (has(server.roles, id) ? server.roles[id] : null));
+  const proven = input.roles.find((l) => held.includes(l));
+  if (proven) return sign({ ...who, provenRole: proven }, "verified", "ok");
+  return sign(who, "not_verified", "role_missing");
 }
 
 function validateInput(p) {
@@ -113,8 +94,8 @@ function validateInput(p) {
   const offered = Object.values(CONFIG.servers[p.guildId].roles);
   const r = p.roles;
   if (!Array.isArray(r) || r.length === 0 || new Set(r).size !== r.length) return null;
-  // Every claimed label must be "Owner" or a label this server's registry defines.
-  if (!r.every((l) => l === "Owner" || (LABELS.includes(l) && offered.includes(l)))) return null;
+  // Every claimed label must be one this server's registry defines.
+  if (!r.every((l) => LABELS.includes(l) && offered.includes(l))) return null;
   if (typeof p.challengeId !== "string" || !/^[A-Za-z0-9_-]{22}$/.test(p.challengeId)) return null;
   if (typeof p.code !== "string" || p.code.length < 10 || p.code.length > 2048) return null;
   if (typeof p.codeVerifier !== "string" || !/^[A-Za-z0-9._~-]{43,128}$/.test(p.codeVerifier)) return null;
@@ -153,7 +134,7 @@ async function exchangeCode(input, clientSecret) {
   }
   if (typeof body.access_token !== "string") return { error: "no_access_token" };
   const granted = String(body.scope || "").split(" ");
-  if (!scopesFor(input.roles).every((s) => granted.includes(s))) return { error: "missing_scope" };
+  if (!SCOPES.every((s) => granted.includes(s))) return { error: "missing_scope" };
   return { accessToken: body.access_token };
 }
 

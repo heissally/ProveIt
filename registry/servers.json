@@ -1,13 +1,13 @@
 {
-  "_about": "Official Discord servers ProveIt can check. Only servers listed here can be verified, so a copycat server can never be used. Each role ID maps to one label: Admin, Mod, Team or Support. Role IDs come from the server's admins (Discord Developer Mode → Server Settings → Roles → right-click a role → Copy Role ID). Changing guildId, name or roles changes the Discord action's CID and signer; officialSource is only shown on the website. Leave officialSource empty only for private test servers.",
+  "_about": "Official Discord servers ProveIt can check. Only servers listed here can be verified, so a copycat server can never be used. Each role ID maps to one label: Admin or Mod. Role IDs come from the server's admins (Discord Developer Mode → Server Settings → Roles → right-click a role → Copy Role ID). Changing guildId, name or roles changes the Discord action's CID and signer; officialSource is only shown on the website. Leave officialSource empty only for private test servers.",
   "servers": [
     {
       "guildId": "1373039981890900099",
       "name": "heis_sallyy's server",
       "officialSource": "",
       "roles": {
-        "1558833453292724345": "Mod",
-        "1558833614886801458": "Team"
+        "1558963704240930896": "Admin",
+        "1558833453292724345": "Mod"
       }
     }
   ]

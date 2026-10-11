@@ -1,5 +1,5 @@
 /**
- * npm run discord:try -- --roles Mod,Team [--server <guildId>] [--expired] [--consent] [--no-open]
+ * npm run discord:try -- --roles Mod [--server <guildId>] [--expired] [--consent] [--no-open]
  *
  * Milestone 4 end-to-end test, before the website exists. It plays both roles:
  *   asker:    picks a registered server and the roles that count, makes a challenge
@@ -9,7 +9,7 @@
  *   asker:    checks the signed result exactly as the result page will
  *             (shared/verify.ts), then shows that a tampered copy is rejected
  *
- *   --roles Owner  check "owns the server" instead of a role
+ *   --roles        Mod, Admin, or Admin,Mod (the roles that count)
  *   --expired      skip sign-in and send an already-expired link
  *   --consent      always show Discord's Authorize screen (so you can test Cancel)
  *   --no-open      print the link instead of opening it, so you can paste it into a
@@ -20,17 +20,13 @@
 import { randomBytes } from "node:crypto";
 import { challengeHashFor, verifyResult, type SignedResult } from "../../shared/verify.ts";
 import { explainReason } from "../../shared/reasons.ts";
+import { DISCORD_SCOPES, ROLE_ORDER } from "../../shared/discord.ts";
 import { loadLitConfig } from "../lib/config.ts";
 import { describeFailure, getActionCid, readActionSource, requireEnv, runLitAction } from "../lib/lit-api.ts";
 import { b64url, catchOAuthCode, makePkce } from "../lib/oauth-local.ts";
 import { loadRegistry } from "../lib/registry.ts";
 
-const LABELS = ["Owner", "Admin", "Mod", "Team", "Support"]; // same order as the action
-// Same rule as the action: ask only for what the claim needs.
-const scopesFor = (roles: string[]) =>
-  ["identify"]
-    .concat(roles.some((l) => l !== "Owner") ? ["guilds.members.read"] : [])
-    .concat(roles.includes("Owner") ? ["guilds"] : []);
+const LABELS: string[] = ROLE_ORDER; // same order as the action
 const args = process.argv.slice(2);
 const argValue = (name: string) => {
   const i = args.indexOf(name);
@@ -38,7 +34,7 @@ const argValue = (name: string) => {
 };
 const rolesArg = argValue("--roles");
 if (!rolesArg) {
-  console.error("\nUsage: npm run discord:try -- --roles Mod,Team [--server <guildId>] [--expired] [--consent] [--no-open]\n");
+  console.error("\nUsage: npm run discord:try -- --roles Mod [--server <guildId>] [--expired] [--consent] [--no-open]\n");
   process.exit(1);
 }
 const asked = rolesArg.split(",").map((r) => r.trim()).filter(Boolean);
@@ -70,7 +66,7 @@ if ((await getActionCid(code)) !== discord.actionCid) {
   process.exit(1);
 }
 
-const claimText = roles.includes("Owner") && roles.length === 1 ? "owns" : `is ${roles.join(" or ")} in`;
+const claimText = `is ${roles.join(" or ")} in`;
 console.log(`\nProveIt · Milestone 4 · live Discord check: someone ${claimText} "${server.name.trim()}"\n`);
 
 // ---- Asker: create the challenge ------------------------------------------------------
@@ -88,7 +84,7 @@ if (!expired) {
   authUrl.search = new URLSearchParams({
     response_type: "code",
     client_id: discord.clientId,
-    scope: scopesFor(roles).join(" "),
+    scope: DISCORD_SCOPES.join(" "),
     redirect_uri: redirectUri,
     state,
     code_challenge: pkce.challenge,
@@ -138,11 +134,11 @@ const who = (r.subject as { discordUsername?: string } | undefined)?.discordUser
 if (v.valid) {
   if (r.status === "verified") {
     const where = `the official server "${server.name.trim()}"`;
-    const what = r.provenRole === "Owner" ? `owns ${where}` : `has the ${r.provenRole} role in ${where}`;
+    const what = `has the ${r.provenRole} role in ${where}`;
     console.log(`  → VERIFIED: Discord user ${who} ${what}`);
     console.log(`    Make sure ${who} is the exact account messaging you. Copycats use lookalike names.`);
   } else {
-    console.log(`  → COULD NOT VERIFY: ${explainReason(r.reason)}${who ? ` (signed in as ${who})` : ""}`);
+    console.log(`  → COULD NOT VERIFY: ${explainReason(r.reason, "discord")}${who ? ` (signed in as ${who})` : ""}`);
     if (r.providerError) console.log(`    Discord's error code: ${r.providerError}`);
   }
 }

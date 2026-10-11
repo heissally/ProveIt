@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/* ProveIt design tokens, from the mockup (brief section 12). */
+@theme {
+  --font-heading: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --color-page: #f3f6f8;
+  --color-ink: #0f172a;
+  --color-muted: #475569;
+  --color-line: #d9dee5;
+
+  --color-accent: #1d4ed8;
+  --color-accent-soft: #e0e8fd;
+  --color-accent-ink: #1e3a8a;
+
+  --color-verifier-soft: #fde3d2;
+  --color-verifier-ink: #9a3412;
+
+  --color-success: #0e7a4f;
+  --color-success-soft: #dff1e7;
+
+  --color-danger: #b42318;
+  --color-danger-soft: #fde2e0;
+
+  --color-warn-soft: #fef0c7;
+  --color-warn-ink: #7a4b00;
+}
+
+html,
+body {
+  background: var(--color-page);
+  color: var(--color-ink);
+}
+
+/* Long unbroken text (links, domains, usernames, addresses) wraps instead of
+   pushing past the edge of a box or the screen. Normal words wrap as usual. */
+body {
+  overflow-wrap: anywhere;
+}

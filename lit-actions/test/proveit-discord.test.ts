@@ -7,8 +7,7 @@ import { readActionSource } from "../../scripts/lib/lit-api.ts";
 import { TEST_ACTION_KEY, actionCanonical, runAction, type RunOptions } from "./harness.ts";
 import {
   ACCESS_TOKEN, AUTH_CODE, CHALLENGE_ID, CLIENT_SECRET, CODE_VERIFIER, GUILD_ID, NOW, OTHER_GUILD_ID, PRIVATE,
-  REFRESH_TOKEN, ROLE, TEST_CONFIG, USER, fakeDiscord, guildsResponse, meResponse, memberResponse,
-  notMemberResponse, params, tokenResponse,
+  REFRESH_TOKEN, ROLE, TEST_CONFIG, USER, fakeDiscord, meResponse, memberResponse, notMemberResponse, params, tokenResponse,
 } from "./fixtures/discord.ts";
 
 let source: string;
@@ -27,7 +26,7 @@ function run(p: Record<string, unknown>, network: Net, extra: Partial<RunOptions
 }
 
 /** The asker's side, exactly as the result page will check it. */
-function askerVerifies(output: any, roles: string[] = ["Mod", "Team"]) {
+function askerVerifies(output: any, roles: string[] = ["Admin", "Mod"]) {
   return verifyResult(output, {
     signer: TEST_ACTION_KEY.address, challengeId: CHALLENGE_ID, method: "discord",
     claim: { guildId: GUILD_ID, guildName: "Lit Protocol", roles }, expiresAt: NOW + 14 * 60,
@@ -40,47 +39,30 @@ describe("proveit-discord.js · verified", () => {
     expect(output.result).toMatchObject({
       status: "verified", reason: "ok", method: "discord", provenRole: "Mod",
       subject: { discordUsername: "kai.lit", discordUserId: USER.id },
-      claim: { guildId: GUILD_ID, guildName: "Lit Protocol", roles: ["Mod", "Team"] },
+      claim: { guildId: GUILD_ID, guildName: "Lit Protocol", roles: ["Admin", "Mod"] },
     });
     expect(askerVerifies(output)).toEqual({ valid: true, problems: [] });
   });
 
-  it("has several roles → proves the first one that counts", async () => {
-    const { output } = await run(params({ roles: ["Team", "Mod"] }), signedIn({ member: memberResponse([ROLE.team, ROLE.mod]) }));
-    expect(output.result.provenRole).toBe("Mod");
-    expect(output.result.claim.roles).toEqual(["Mod", "Team"]); // claim is always listed in one fixed order
+  it("Admin claim with the Admin role → verified as Admin", async () => {
+    const { output } = await run(params({ roles: ["Admin"] }), signedIn({ member: memberResponse([ROLE.admin]) }));
+    expect(output.result.provenRole).toBe("Admin");
+    expect(askerVerifies(output, ["Admin"]).valid).toBe(true);
   });
 
-  it("server owner claim → checks ownership via the server list", async () => {
-    const { output, fetches } = await run(
-      params({ roles: ["Owner"] }),
-      signedIn({ guilds: guildsResponse([{ id: OTHER_GUILD_ID, owner: true }, { id: GUILD_ID, owner: true }]) }),
-    );
-    expect(output.result).toMatchObject({ status: "verified", provenRole: "Owner" });
-    expect(fetches.map((f) => f.url)).not.toContain(`https://discord.com/api/v10/users/@me/guilds/${GUILD_ID}/member`);
-    expect(askerVerifies(output, ["Owner"]).valid).toBe(true);
+  it("has both roles → proves the first in the fixed order (Admin)", async () => {
+    const { output } = await run(params({ roles: ["Mod", "Admin"] }), signedIn({ member: memberResponse([ROLE.mod, ROLE.admin]) }));
+    expect(output.result.provenRole).toBe("Admin");
+    expect(output.result.claim.roles).toEqual(["Admin", "Mod"]); // claim is always listed in one fixed order
   });
 
-  it("owner OR admin claim, account owns the server but has no Admin role → verified as Owner", async () => {
-    const { output } = await run(
-      params({ roles: ["Admin", "Owner"] }),
-      signedIn({ member: memberResponse([]), guilds: guildsResponse([{ id: GUILD_ID, owner: true }]) }),
-    );
-    expect(output.result).toMatchObject({ status: "verified", provenRole: "Owner" });
-  });
-
-  it("role claim works with only identify + guilds.members.read (no list of all servers)", async () => {
-    const { output, fetches } = await run(params(), signedIn({ token: tokenResponse("identify guilds.members.read"), member: memberResponse([ROLE.mod]) }));
-    expect(output.result.status).toBe("verified");
-    expect(fetches.map((f) => f.url)).not.toContain("https://discord.com/api/v10/users/@me/guilds");
-  });
-
-  it("owner claim works with only identify + guilds", async () => {
-    const { output } = await run(
-      params({ roles: ["Owner"] }),
-      signedIn({ token: tokenResponse("identify guilds"), guilds: guildsResponse([{ id: GUILD_ID, owner: true }]) }),
-    );
-    expect(output.result.provenRole).toBe("Owner");
+  it("asks Discord only for who you are and your roles in this one server (never the server list)", async () => {
+    const { fetches } = await run(params(), signedIn({ member: memberResponse([ROLE.mod]) }));
+    expect(fetches.map((f) => f.url)).toEqual([
+      "https://discord.com/api/v10/oauth2/token",
+      "https://discord.com/api/v10/users/@me",
+      `https://discord.com/api/v10/users/@me/guilds/${GUILD_ID}/member`,
+    ]);
   });
 
   it("sends Discord exactly what the token exchange needs", async () => {
@@ -96,10 +78,15 @@ describe("proveit-discord.js · verified", () => {
 
 describe("proveit-discord.js · could not verify (signed)", () => {
   it("in the server but without a role that counts → role_missing, username shown", async () => {
-    const { output } = await run(params(), signedIn({ member: memberResponse([ROLE.artist, ROLE.support]) }));
+    const { output } = await run(params(), signedIn({ member: memberResponse([ROLE.artist, ROLE.team]) }));
     expect(output.result).toMatchObject({ status: "not_verified", reason: "role_missing", subject: { discordUsername: "kai.lit" } });
     expect(output.result.provenRole).toBeUndefined();
     expect(askerVerifies(output).valid).toBe(true);
+  });
+
+  it("asked for Admin only, has Mod → role_missing (Mod doesn't count when not asked for)", async () => {
+    const { output } = await run(params({ roles: ["Admin"] }), signedIn({ member: memberResponse([ROLE.mod]) }));
+    expect(output.result.reason).toBe("role_missing");
   });
 
   it("copycat with a lookalike username and no role → role_missing, their real username shown", async () => {
@@ -107,32 +94,14 @@ describe("proveit-discord.js · could not verify (signed)", () => {
     expect(output.result).toMatchObject({ reason: "role_missing", subject: { discordUsername: "kai.lit.support" } });
   });
 
-  it("a role ID not in the registry never counts, even if it has the right name in a copycat server", async () => {
+  it("a role ID not in the registry never counts, even if it's named 'Mod' in a copycat server", async () => {
     const { output } = await run(params(), signedIn({ member: memberResponse(["1299999999999999999"]) }));
     expect(output.result.reason).toBe("role_missing");
   });
 
   it("not in the server → not_member", async () => {
     const { output } = await run(params(), signedIn({ member: notMemberResponse }));
-    expect(output.result).toMatchObject({ status: "not_verified", reason: "not_member" });
-  });
-
-  it("owner claim, member but not the owner → not_owner", async () => {
-    const { output } = await run(params({ roles: ["Owner"] }), signedIn({ guilds: guildsResponse([{ id: GUILD_ID, owner: false }]) }));
-    expect(output.result.reason).toBe("not_owner");
-  });
-
-  it("owner claim, not in the server at all → not_member", async () => {
-    const { output } = await run(params({ roles: ["Owner"] }), signedIn({ guilds: guildsResponse([{ id: OTHER_GUILD_ID, owner: true }]) }));
-    expect(output.result.reason).toBe("not_member");
-  });
-
-  it("owner or mod claim, neither → role_missing", async () => {
-    const { output } = await run(
-      params({ roles: ["Owner", "Mod"] }),
-      signedIn({ member: memberResponse([]), guilds: guildsResponse([{ id: GUILD_ID, owner: false }]) }),
-    );
-    expect(output.result.reason).toBe("role_missing");
+    expect(output.result).toMatchObject({ status: "not_verified", reason: "not_member", subject: { discordUsername: "kai.lit" } });
   });
 
   it("expired link → expired, without contacting Discord or opening the safe", async () => {
@@ -147,7 +116,7 @@ describe("proveit-discord.js · could not verify (signed)", () => {
     ["wrong client secret", { token: { status: 401, body: { error: "invalid_client" } } }, "discord_401_invalid_client"],
     ["Discord unreachable", { token: new Error("network down") }, "discord_unreachable"],
     ["no access token in the answer", { token: { status: 200, body: { token_type: "Bearer" } } }, "no_access_token"],
-    ["user did not grant the server-roles scope", { token: tokenResponse("identify guilds") }, "missing_scope"],
+    ["user did not grant the member-info scope", { token: tokenResponse("identify") }, "missing_scope"],
     ["/users/@me fails", { token: tokenResponse(), me: { status: 500, body: {} } }, "discord_me_500"],
     ["member lookup rate-limited", signedIn({ member: { status: 429, body: { message: "You are being rate limited.", retry_after: 1.5 } } }), "discord_member_429"],
   ];
@@ -155,18 +124,13 @@ describe("proveit-discord.js · could not verify (signed)", () => {
     it(`${label} → provider_error / ${code}`, async () => {
       const { output } = await run(params(), network);
       expect(output.result).toMatchObject({ status: "not_verified", reason: "provider_error", providerError: code });
-      expect(output.result.subject === undefined || label.includes("member")).toBe(true);
+      expect(output.result.subject).toBeUndefined();
     });
   }
 
-  it("owner claim but the server-list scope wasn't granted → provider_error / missing_scope", async () => {
-    const { output } = await run(params({ roles: ["Owner"] }), signedIn({ token: tokenResponse("identify guilds.members.read") }));
-    expect(output.result.providerError).toBe("missing_scope");
-  });
-
-  it("owner check: server list fails → provider_error", async () => {
-    const { output } = await run(params({ roles: ["Owner"] }), signedIn({ guilds: { status: 502, body: "<html>" } }));
-    expect(output.result.providerError).toBe("discord_guilds_502");
+  it("a token with extra scopes still works (we only check ours are there)", async () => {
+    const { output } = await run(params(), signedIn({ token: tokenResponse("identify guilds guilds.members.read"), member: memberResponse([ROLE.mod]) }));
+    expect(output.result.status).toBe("verified");
   });
 });
 
@@ -177,6 +141,8 @@ describe("proveit-discord.js · bad input (unsigned, exits early)", () => {
     ["guildId tries a prototype trick", { guildId: "__proto__" }],
     ["no roles claimed", { roles: [] }],
     ["roles is not a list", { roles: "Mod" }],
+    ["a removed label: Owner", { roles: ["Owner"] }],
+    ["a removed label: Team", { roles: ["Team"] }],
     ["unknown role label", { roles: ["Moderator"] }],
     ["the same role twice", { roles: ["Mod", "Mod"] }],
     ["challengeId too short", { challengeId: "abc" }],
@@ -244,7 +210,7 @@ describe("proveit-discord.js · privacy and signing", () => {
   });
 
   it("the action's copy of canonical() matches shared/canonical.ts", () => {
-    for (const v of [{ b: [1, { d: null, c: "✓" }], a: true }, "x\"y", { roles: ["Mod", "Team"], v: 1 }]) {
+    for (const v of [{ b: [1, { d: null, c: "✓" }], a: true }, "x\"y", { roles: ["Admin", "Mod"], v: 1 }]) {
       expect(actionCanonical(source, v)).toBe(canonical(v));
     }
   });
