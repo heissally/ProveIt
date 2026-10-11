@@ -31,6 +31,16 @@ describe("action CONFIG block", () => {
     expect(stampConfig(stampConfig(source, sample), sample)).toBe(stampConfig(source, sample));
   });
 
+  it("writes the Discord server registry the same way whatever order it was listed in", async () => {
+    const source = await readActionSource("lit-actions/proveit-discord.js");
+    const a = { "1200000000000000002": "Mod", "1200000000000000001": "Admin" };
+    const b = { "1200000000000000001": "Admin", "1200000000000000002": "Mod" };
+    const one = stampConfig(source, { ...sample, servers: { "1100000000000000001": { name: "Lit", roles: a } } });
+    const two = stampConfig(source, { ...sample, servers: { "1100000000000000001": { roles: b, name: "Lit" } } as never });
+    expect(one).toBe(two);
+    expect(readConfig(one).servers).toEqual({ "1100000000000000001": { name: "Lit", roles: b } });
+  });
+
   it("refuses a file without exactly one config block", () => {
     expect(() => stampConfig("async function main() {}", sample)).toThrow(/config block/);
   });

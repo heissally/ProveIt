@@ -12,6 +12,14 @@
     "previousActionCid": "QmUuoN9WXNA4Xt3PyS1PFz7Rf7wfy5cc6GKmeQyxH9q8xv"
   },
   "discord": {
-    "pkp": "0xc6f43ac3a9d2515cada59be8b48790cdaabc1e06"
+    "pkp": "0xc6f43ac3a9d2515cada59be8b48790cdaabc1e06",
+    "redirectUris": [
+      "http://localhost:3000/callback/discord"
+    ],
+    "clientId": "1558835182889467954",
+    "encryptedClientSecret": "70ea928ce47197791e6a277f517dc0791d3bdd580be38704fd110275dba93d2b865bd6cfa7ee5669b5dd473abdf04b020654aa3d916d3b5ca262acae",
+    "actionCid": "QmRJYJSSnrWsx924JHsQTNh5dzQMGzKT4nnobK1t1147fN",
+    "signer": "0xb0b72930bb4e041f8033f8f2bfc472e24f0cd874",
+    "previousActionCid": "QmVgt81HVrgniGFGULyrwwsRpgBBevB8pUGkA2dDQVBbLe"
   }
 }

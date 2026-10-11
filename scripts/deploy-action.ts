@@ -15,11 +15,12 @@ import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { stampConfig } from "./lib/action-config.ts";
 import { loadLitConfig, updateMethodConfig } from "./lib/config.ts";
+import { loadRegistry, missingOfficialSource, registryForAction } from "./lib/registry.ts";
 import { REPO_ROOT, getActionCid, readActionSource, requireEnv, runLitAction, describeFailure } from "./lib/lit-api.ts";
 
 const method = process.argv[2];
-if (method !== "google") {
-  console.error("\nUsage: npm run action:deploy -- google   (Discord comes in Milestone 4)\n");
+if (method !== "google" && method !== "discord") {
+  console.error("\nUsage: npm run action:deploy -- google   or   npm run action:deploy -- discord\n");
   process.exit(1);
 }
 const devKey = requireEnv("LIT_DEV_USAGE_KEY");
@@ -38,6 +39,23 @@ if (missing.length) {
   process.exit(1);
 }
 
+// Discord only: the official-server registry goes into the action too.
+let servers: ReturnType<typeof registryForAction> | undefined;
+if (method === "discord") {
+  let registry;
+  try {
+    registry = await loadRegistry();
+  } catch (err) {
+    console.log(`✗ ${(err as Error).message}\n`);
+    process.exit(1);
+  }
+  servers = registryForAction(registry);
+  for (const name of missingOfficialSource(registry)) {
+    console.log(`  ⚠ "${name}" has no officialSource. Fine for testing; add one before this server goes public.`);
+  }
+  console.log(`✓ Registry: ${Object.values(servers).map((s) => `${s.name} (${Object.keys(s.roles).length} roles)`).join(", ")}`);
+}
+
 // ---- 1. Write the settings into the action ------------------------------------------
 const filePath = join(REPO_ROOT, actionPath);
 const before = await readFile(filePath, "utf8");
@@ -46,6 +64,7 @@ const after = stampConfig(before, {
   pkpId: config.pkp,
   encryptedClientSecret: config.encryptedClientSecret!,
   redirectUris: config.redirectUris!,
+  ...(servers ? { servers } : {}),
 });
 if (after !== before) await writeFile(filePath, after);
 console.log(after !== before ? `✓ Wrote the settings into ${actionPath}` : `✓ ${actionPath} already has these settings`);
@@ -83,4 +102,5 @@ console.log(`     · tick   proveit-${method} ${cid.slice(0, 8)}`);
 if (retire) console.log(`     · untick proveit-${method} ${retire.slice(0, 8)} (the old version)`);
 console.log("     · untick proveit-encrypt-secret (tick it again only when changing the secret)");
 console.log("     · leave only the " + method + " safe ticked under PKP IDs permitted. Save.");
-console.log(`  3. Wait about a minute, then test it: npm run ${method}:try -- --domain <company domain>\n`);
+const tryArgs = method === "google" ? "--domain <company domain>" : "--roles Mod,Team   (or --roles Owner)";
+console.log(`  3. Wait about a minute, then test it: npm run ${method}:try -- ${tryArgs}\n`);

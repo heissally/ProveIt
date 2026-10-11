@@ -16,7 +16,8 @@
     "lit:vault": "node --env-file-if-exists=.env.local scripts/m2/run-vault-test.ts",
     "secret:encrypt": "node --env-file-if-exists=.env.local scripts/encrypt-secret.ts",
     "action:deploy": "node --env-file-if-exists=.env.local scripts/deploy-action.ts",
-    "google:try": "node --env-file-if-exists=.env.local scripts/m3/try-google.ts"
+    "google:try": "node --env-file-if-exists=.env.local scripts/m3/try-google.ts",
+    "discord:try": "node --env-file-if-exists=.env.local scripts/m4/try-discord.ts"
   },
   "devDependencies": {
     "ethers": "5.8.0",
