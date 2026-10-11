@@ -1,0 +1,3 @@
+# A Lit Action's identity (its CID) is a hash of its exact bytes.
+# Force LF line endings so every checkout produces the same CID on every OS.
+lit-actions/** text eol=lf

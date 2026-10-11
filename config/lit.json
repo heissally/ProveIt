@@ -1,0 +1,17 @@
+{
+  "_about": "Public Lit settings for ProveIt. Nothing in this file is secret: PKP addresses are public. Never put API keys or client secrets here.",
+  "google": {
+    "pkp": "0xe59e58610d4940b5d35b448b6e2a16b1d58965e3",
+    "redirectUris": [
+      "http://localhost:3000/callback/google"
+    ],
+    "clientId": "317187452751-16f5u1j05g9gqulj9ednemdi4enrg1fn.apps.googleusercontent.com",
+    "encryptedClientSecret": "8ab8a0d9002309bc1d064c711600b00042683bf21c06de8125148b759e4e051485d33fae7f29b0dc1e30e1c468cec9340f28a3bc589257314fb177f0ff04a4",
+    "actionCid": "QmR3TkQfTXxyJhfniHnYfa2tuZTtPfHQL2umA1fCVuKR6p",
+    "signer": "0x23c8f165def82326734c9dd0dc3fb75a52489183",
+    "previousActionCid": "QmUuoN9WXNA4Xt3PyS1PFz7Rf7wfy5cc6GKmeQyxH9q8xv"
+  },
+  "discord": {
+    "pkp": "0xc6f43ac3a9d2515cada59be8b48790cdaabc1e06"
+  }
+}

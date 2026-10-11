@@ -1,0 +1,25 @@
+{
+  "name": "proveit",
+  "version": "0.0.1",
+  "private": true,
+  "description": "ProveIt: a 'prove it' link that checks a stranger's work account or Discord role inside a Lit Action and signs the result.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "lit:cids": "node scripts/m1/print-cids.ts",
+    "lit:account": "node --env-file-if-exists=.env.local scripts/m1/check-account.ts",
+    "lit:probe": "node --env-file-if-exists=.env.local scripts/m1/run-probes.ts",
+    "lit:vault": "node --env-file-if-exists=.env.local scripts/m2/run-vault-test.ts",
+    "secret:encrypt": "node --env-file-if-exists=.env.local scripts/encrypt-secret.ts",
+    "action:deploy": "node --env-file-if-exists=.env.local scripts/deploy-action.ts",
+    "google:try": "node --env-file-if-exists=.env.local scripts/m3/try-google.ts"
+  },
+  "devDependencies": {
+    "ethers": "5.8.0",
+    "vitest": "^5.0.3"
+  }
+}

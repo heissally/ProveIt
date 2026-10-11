@@ -1,0 +1,9 @@
+node_modules/
+
+# Secrets live only in .env.local on your own machine. Never commit them.
+.env
+.env.*
+!.env.example
+
+.DS_Store
+*.log
