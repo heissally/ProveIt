@@ -3,23 +3,25 @@
   "google": {
     "pkp": "0xe59e58610d4940b5d35b448b6e2a16b1d58965e3",
     "redirectUris": [
-      "http://localhost:3000/callback/google"
+      "http://localhost:3000/callback/google",
+      "https://prove-it.com.ng/callback/google"
     ],
     "clientId": "317187452751-16f5u1j05g9gqulj9ednemdi4enrg1fn.apps.googleusercontent.com",
-    "encryptedClientSecret": "8ab8a0d9002309bc1d064c711600b00042683bf21c06de8125148b759e4e051485d33fae7f29b0dc1e30e1c468cec9340f28a3bc589257314fb177f0ff04a4",
-    "actionCid": "QmR3TkQfTXxyJhfniHnYfa2tuZTtPfHQL2umA1fCVuKR6p",
-    "signer": "0x23c8f165def82326734c9dd0dc3fb75a52489183",
-    "previousActionCid": "QmUuoN9WXNA4Xt3PyS1PFz7Rf7wfy5cc6GKmeQyxH9q8xv"
+    "encryptedClientSecret": "5ad25f81f191009c5745c49ce441285b0a5f35c1238269ad629b2adcb1ee97efdf8c95b5f938380cc86ae469c96cdeb1556fb2ce4000bb075d70f942079ccf",
+    "actionCid": "QmUsphNDzVSDQ8m9wE6vRVcZk9PfExQHo1N9S8PQmAJUoh",
+    "signer": "0x961a516123667e47dd7466bbf23ecce0013ecfee",
+    "previousActionCid": "QmR3TkQfTXxyJhfniHnYfa2tuZTtPfHQL2umA1fCVuKR6p"
   },
   "discord": {
     "pkp": "0xc6f43ac3a9d2515cada59be8b48790cdaabc1e06",
     "redirectUris": [
-      "http://localhost:3000/callback/discord"
+      "http://localhost:3000/callback/discord",
+      "https://prove-it.com.ng/callback/discord"
     ],
     "clientId": "1558835182889467954",
     "encryptedClientSecret": "70ea928ce47197791e6a277f517dc0791d3bdd580be38704fd110275dba93d2b865bd6cfa7ee5669b5dd473abdf04b020654aa3d916d3b5ca262acae",
-    "actionCid": "QmZmW4g87E7rtWNpUf4kBXqWJv1KbVMz2H7SSpDBTtyws3",
-    "signer": "0x338176a86083ba69436803dc7973f08729480faa",
-    "previousActionCid": "QmPgNdmqAnK6Ht6aU9kqjdGqeUzAq3T5L4Ke4UryXHkJq7"
+    "actionCid": "QmPRsDgjxDPSY4yAayoWMHa7CFPqxhZrApY5Nh2uknnXSe",
+    "signer": "0x359126777c53be99fb4c97730cd6607e4ed331dd",
+    "previousActionCid": "QmZmW4g87E7rtWNpUf4kBXqWJv1KbVMz2H7SSpDBTtyws3"
   }
 }

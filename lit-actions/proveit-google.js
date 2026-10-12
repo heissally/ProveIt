@@ -16,9 +16,10 @@
 const CONFIG = {
   "clientId": "317187452751-16f5u1j05g9gqulj9ednemdi4enrg1fn.apps.googleusercontent.com",
   "pkpId": "0xe59e58610d4940b5d35b448b6e2a16b1d58965e3",
-  "encryptedClientSecret": "8ab8a0d9002309bc1d064c711600b00042683bf21c06de8125148b759e4e051485d33fae7f29b0dc1e30e1c468cec9340f28a3bc589257314fb177f0ff04a4",
+  "encryptedClientSecret": "5ad25f81f191009c5745c49ce441285b0a5f35c1238269ad629b2adcb1ee97efdf8c95b5f938380cc86ae469c96cdeb1556fb2ce4000bb075d70f942079ccf",
   "redirectUris": [
-    "http://localhost:3000/callback/google"
+    "http://localhost:3000/callback/google",
+    "https://prove-it.com.ng/callback/google"
   ]
 };
 // ---- end ProveIt config ----

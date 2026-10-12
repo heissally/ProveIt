@@ -19,7 +19,8 @@ const CONFIG = {
   "pkpId": "0xc6f43ac3a9d2515cada59be8b48790cdaabc1e06",
   "encryptedClientSecret": "70ea928ce47197791e6a277f517dc0791d3bdd580be38704fd110275dba93d2b865bd6cfa7ee5669b5dd473abdf04b020654aa3d916d3b5ca262acae",
   "redirectUris": [
-    "http://localhost:3000/callback/discord"
+    "http://localhost:3000/callback/discord",
+    "https://prove-it.com.ng/callback/discord"
   ],
   "servers": {
     "1373039981890900099": {
