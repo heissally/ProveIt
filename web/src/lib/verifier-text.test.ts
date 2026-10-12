@@ -54,8 +54,8 @@ describe("lock box: what was shared", () => {
   });
 
   it("Discord role missing: username and the reason, no role", () => {
-    const r = result({ method: "discord", reason: "role_missing", subject: { discordUsername: "second account", discordUserId: "2" } });
-    expect(sharedNote(discord, r)).toBe("Only your username (second account) and the reason the check didn’t pass were shared. Nothing else from your Discord account was shared.");
+    const r = result({ method: "discord", reason: "role_missing", subject: { discordUsername: "a second test account", discordUserId: "2" } });
+    expect(sharedNote(discord, r)).toBe("Only your username (a second test account) and the reason the check didn’t pass were shared. Nothing else from your Discord account was shared.");
   });
 
   it("Discord error before sign-in finished: nothing from the account", () => {
