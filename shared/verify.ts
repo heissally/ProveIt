@@ -72,6 +72,8 @@ export function verifyResult(signed: SignedResult, expected: Expected): Verifica
   }
 
   try {
+    // LIT: the expected signer is the address of the action's own key, which Lit
+    // derives from the action's CID. Only that exact code can sign as this address.
     const recovered = ethers.utils.verifyMessage(message, signed.signature);
     if (recovered.toLowerCase() !== expected.signer.toLowerCase()) {
       problems.push("signature is not from the published ProveIt Lit Action");

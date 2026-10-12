@@ -118,7 +118,9 @@ export async function runLitAction(
 }
 
 /**
- * Ask Lit for the CID of some action code. Free, no API key needed.
+ * LIT: ask Chipotle for the CID (IPFS hash) of some action code: the same hash it
+ * computes on every /lit_action call to decide which groups the code belongs to.
+ * Free, no API key needed.
  * (Later we will also compute this locally, as Lit recommends for production.)
  */
 export async function getActionCid(code: string): Promise<string> {
@@ -147,6 +149,14 @@ export function describeFailure(r: LitActionResult): string {
   const why = r.error !== undefined ? JSON.stringify(r.error) : r.logs.slice(0, 300);
   return `HTTP ${r.status}: ${String(why).slice(0, 300)}`;
 }
+
+/** The actions ProveIt runs in production. */
+export const PRODUCTION_ACTIONS = [
+  { name: "proveit-google", path: "lit-actions/proveit-google.js" },
+  { name: "proveit-discord", path: "lit-actions/proveit-discord.js" },
+  { name: "proveit-signer-lookup", path: "lit-actions/proveit-signer-lookup.js" },
+  { name: "proveit-encrypt-secret", path: "lit-actions/proveit-encrypt-secret.js" },
+] as const;
 
 /** The three actions used in Milestone 1, in the order you register them. */
 export const M1_ACTIONS = [

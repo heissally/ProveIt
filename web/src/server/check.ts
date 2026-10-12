@@ -66,6 +66,7 @@ export async function handleCheck(body: unknown, ip: string, deps: CheckDeps): P
   }
 
   // Sanity check before storing (the asker's page repeats this independently).
+  // LIT: a genuine result is signed by the action's CID-derived key (its published signer).
   const challengeHash = challengeHashFor(String(params.challengeId));
   let genuine = false;
   try {

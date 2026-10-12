@@ -1,12 +1,14 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { M1_ACTIONS, M2_ACTIONS, REPO_ROOT, readActionSource, vaultTwinSource } from "./lit-api.ts";
+import { M1_ACTIONS, M2_ACTIONS, PRODUCTION_ACTIONS, REPO_ROOT, readActionSource, vaultTwinSource } from "./lit-api.ts";
 
 // The code we send to Lit must be byte-for-byte what the Lit Dashboard would
 // hash when someone pastes the same file, so that both give the same CID.
 describe("readActionSource", () => {
-  for (const action of [...M1_ACTIONS, ...M2_ACTIONS]) {
+  const paths = [...new Set([...PRODUCTION_ACTIONS, ...M1_ACTIONS, ...M2_ACTIONS].map((a) => a.path))];
+  for (const path of paths) {
+    const action = { path };
     it(`${action.path} is sent exactly as the Dashboard would hash it`, async () => {
       const raw = await readFile(join(REPO_ROOT, action.path), "utf8");
       const sent = await readActionSource(action.path);
