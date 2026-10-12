@@ -8,15 +8,13 @@ forge a "Verified" result, including whoever runs ProveIt.
 
 **Live:** https://prove-it.com.ng
 
-<!-- Demo videos go here: Google flow and Discord flow (see "Demo" below). -->
+**Google: "works at a company"**
 
 https://github.com/user-attachments/assets/f4e478d1-6c3d-4236-88a1-37da9bde0683
 
-
+**Discord: "admin or mod in a server"**
 
 https://github.com/user-attachments/assets/d6a6d25e-130f-49b1-84da-4d3e43a1dae5
-
-
 
 ---
 
@@ -58,8 +56,9 @@ sequenceDiagram
     participant R as Results store (untrusted)
 
     A->>A: make a check: random challengeId + the claim (domain, or server + roles)
-    A-->>V: send the link /v/<challengeId>?…
-    V->>P: sign in on the provider's own page (PKCE; Google also gets nonce = SHA-256(challengeId))
+    A-->>V: send the link /v/challengeId
+    V->>P: sign in on the provider's own page, with PKCE
+    Note over V,P: Google also gets nonce = SHA-256(challengeId)
     P-->>V: one-time code
     V->>S: code + PKCE verifier + the check
     S->>L: run the exact action code (by CID) with the usage key
@@ -204,12 +203,6 @@ A result counts only if **all** of these hold:
 - `provider_error` (plus a short `providerError` code)
 - `role_missing`
 - `not_member`
-
----
-
-## Demo
-
-<!-- Add the recorded Google and Discord flows here. -->
 
 ---
 
