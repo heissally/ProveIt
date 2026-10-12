@@ -10,6 +10,14 @@ forge a "Verified" result, including whoever runs ProveIt.
 
 <!-- Demo videos go here: Google flow and Discord flow (see "Demo" below). -->
 
+https://github.com/user-attachments/assets/f4e478d1-6c3d-4236-88a1-37da9bde0683
+
+
+
+https://github.com/user-attachments/assets/d6a6d25e-130f-49b1-84da-4d3e43a1dae5
+
+
+
 ---
 
 ## The problem
