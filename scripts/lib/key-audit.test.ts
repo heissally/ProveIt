@@ -37,6 +37,20 @@ describe("auditKeys", () => {
     expect(auditKeys([key], names)[0].problems).toHaveLength(6);
   });
 
+  it("flags the website key if it can also run the tools group", () => {
+    const [r] = auditKeys([executeOnly("proveit-web-key", [2, 3, 4])], names);
+    expect(r.problems).toEqual(["should not execute in proveit-tools"]);
+  });
+
+  it("flags the website key if it lost one of the two check groups", () => {
+    const [r] = auditKeys([executeOnly("proveit-web-key", [2])], names);
+    expect(r.problems).toEqual(["must also execute in proveit-discord"]);
+  });
+
+  it("doesn't restrict keys with no expectation (e.g. the dev key may use tools)", () => {
+    expect(auditKeys([executeOnly("proveit-dev-key", [2, 3, 4])], names)[0].problems).toEqual([]);
+  });
+
   it("shows groups it can't name instead of hiding them", () => {
     expect(auditKeys([executeOnly("old", [9])], names)[0].executesIn).toEqual(["unknown group 9"]);
   });

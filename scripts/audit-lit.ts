@@ -84,7 +84,9 @@ if (!Array.isArray(groupsRes.data) || !Array.isArray(keysRes.data)) {
     if (r.problems.length === 0) ok(`${r.name}: execute-only, in ${where}`);
     else bad(`${r.name} (in ${where}): ${r.problems.join("; ")}`);
   }
-  console.log("  (The website's key should execute only in proveit-google and proveit-discord.)");
+  if (!(keysRes.data as KeyInfo[]).some((k) => k.name === "proveit-web-key")) {
+    console.log("  ℹ no key named proveit-web-key found, so the website key's groups weren't checked");
+  }
 }
 
 console.log(`\n${failures === 0 ? "✓ Audit passed." : `✗ ${failures} problem(s) found. Fix them in the Lit Dashboard, then run again.`}\n`);

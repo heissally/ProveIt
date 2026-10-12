@@ -19,8 +19,18 @@ export interface KeyReport {
   problems: string[];
 }
 
+/** The groups each named key must execute in: no more, no fewer. */
+export const EXPECTED_GROUPS: Record<string, string[]> = {
+  // The website only runs the two check actions; it never needs the tools group.
+  "proveit-web-key": ["proveit-discord", "proveit-google"],
+};
+
 /** groupNames: decimal group id → group name. Group 0 means "all groups". */
-export function auditKeys(keys: KeyInfo[], groupNames: Record<string, string>): KeyReport[] {
+export function auditKeys(
+  keys: KeyInfo[],
+  groupNames: Record<string, string>,
+  expected: Record<string, string[]> = EXPECTED_GROUPS,
+): KeyReport[] {
   return keys.map((k) => {
     const problems: string[] = [];
     const ids = (k.can_execute_in_groups ?? []).map(String);
@@ -32,6 +42,13 @@ export function auditKeys(keys: KeyInfo[], groupNames: Record<string, string>): 
     if ((k.can_add_pkp_to_groups ?? []).length) problems.push("can add PKPs to groups");
     if ((k.can_remove_pkp_from_groups ?? []).length) problems.push("can remove PKPs from groups");
     const executesIn = ids.filter((id) => id !== "0").map((id) => groupNames[id] ?? `unknown group ${id}`);
+    const want = expected[k.name];
+    if (want) {
+      const extra = executesIn.filter((g) => !want.includes(g));
+      const missing = want.filter((g) => !executesIn.includes(g));
+      if (extra.length) problems.push(`should not execute in ${extra.join(", ")}`);
+      if (missing.length) problems.push(`must also execute in ${missing.join(", ")}`);
+    }
     return { name: k.name || "(no name)", executesIn, problems };
   });
 }
