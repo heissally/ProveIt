@@ -31,6 +31,10 @@ export function Screen({ role, children }: { role?: "asker" | "verifier"; childr
         {role === "verifier" && <span className="rounded-full bg-verifier-soft px-3 py-1.5 text-sm font-semibold text-verifier-ink">You: the verifier</span>}
       </header>
       <div className="flex flex-1 flex-col">{children}</div>
+      <footer className="mt-10 flex justify-center gap-4 text-sm text-muted">
+        <Link href="/privacy" className="underline">Privacy</Link>
+        <Link href="/verify" className="underline">Verify a result</Link>
+      </footer>
     </main>
   );
 }
