@@ -10,11 +10,17 @@ forge a "Verified" result, including whoever runs ProveIt.
 
 **Google: "works at a company"**
 
-https://github.com/user-attachments/assets/f4e478d1-6c3d-4236-88a1-37da9bde0683
+
+
+https://github.com/user-attachments/assets/877b5351-6d4f-49a2-b66c-1631d09ab26f
+
 
 **Discord: "admin or mod in a server"**
 
-https://github.com/user-attachments/assets/d6a6d25e-130f-49b1-84da-4d3e43a1dae5
+
+
+https://github.com/user-attachments/assets/f487defe-5be0-494f-8ff0-4f271c822a32
+
 
 ---
 
