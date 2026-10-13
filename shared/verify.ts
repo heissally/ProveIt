@@ -43,7 +43,7 @@ export interface Expected {
   /** The challengeId from the asker's own link. */
   challengeId: string;
   method: "google" | "discord";
-  /** What the asker asked for, e.g. { domain: "coinbase.com" }. */
+  /** What the asker asked for, e.g. { domain: "company.com" }. */
   claim: Record<string, unknown>;
   /** The expiry the asker's link was created with. */
   expiresAt: number;

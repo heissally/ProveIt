@@ -61,7 +61,7 @@ export default function NewCheck() {
     let check: Check;
     if (method === "google") {
       const domain = normalizeDomain(domainInput);
-      if (!domain) return setError("Type a company domain, like coinbase.com.");
+      if (!domain) return setError("Type a company domain, like company.com.");
       check = { method, challengeId, expiresAt, domain };
     } else {
       if (!server) return setError("Pick an official server.");
@@ -100,7 +100,7 @@ export default function NewCheck() {
               id="domain"
               value={domainInput}
               onChange={(e) => setDomainInput(e.target.value)}
-              placeholder="coinbase.com"
+              placeholder="company.com"
               autoCapitalize="none"
               autoCorrect="off"
               spellCheck={false}

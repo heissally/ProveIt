@@ -47,7 +47,7 @@ export function checkCode(challengeId: string): string {
 }
 
 /**
- * Turn what the asker typed into a bare domain: "https://www.Coinbase.com/careers" → "coinbase.com".
+ * Turn what the asker typed into a bare domain: "https://www.Company.com/careers" → "company.com".
  * Returns null if it isn't a domain.
  */
 export function normalizeDomain(input: string): string | null {
