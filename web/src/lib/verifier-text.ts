@@ -7,6 +7,7 @@
  * The one-time code passes through the website on its way to Lit (see SECURITY.md).
  */
 import type { ProveItResult } from "../../../shared/verify.ts";
+import { roleName } from "../../../shared/discord.ts";
 import { explainReasonToVerifier } from "../../../shared/reasons.ts";
 import type { Check } from "./challenge";
 import type { ServerSettings } from "./config";
@@ -34,7 +35,7 @@ export function sharedNote(check: Check, result: ProveItResult): string {
   const username = (result.subject as { discordUsername?: unknown } | undefined)?.discordUsername;
   const rest = "Nothing else from your Discord account was shared.";
   if (verified && typeof username === "string") {
-    return `Only your username (${username}) and your ${String(result.provenRole)} role were shared. ${rest}`;
+    return `Only your username (${username}) and your ${roleName(result.provenRole)} role were shared. ${rest}`;
   }
   if (typeof username === "string") return `Only your username (${username}) and the reason the check didn’t pass were shared. ${rest}`;
   return "Nothing from your Discord account was shared, only the reason the check didn’t pass.";

@@ -7,18 +7,29 @@
   },
   "discord": {
     "clientId": "1558835182889467954",
-    "actionCid": "QmPRsDgjxDPSY4yAayoWMHa7CFPqxhZrApY5Nh2uknnXSe",
-    "signer": "0x359126777c53be99fb4c97730cd6607e4ed331dd"
+    "actionCid": "QmZkED3sSjvo31mQioqasBEaPU8twyJRTT5VTM8mjPYZFg",
+    "signer": "0x140ffa2e09f023f7c390f1f2cba49e728c87d7bf"
   },
   "servers": [
     {
+      "guildId": "896185694857343026",
+      "name": "Lit Protocol",
+      "officialSource": "https://developer.litprotocol.com",
+      "roles": [
+        "Admin",
+        "Mod"
+      ],
+      "listed": true
+    },
+    {
       "guildId": "1373039981890900099",
-      "name": "heis_sallyy's server",
+      "name": "ProveIt demo server",
       "officialSource": "",
       "roles": [
         "Admin",
         "Mod"
-      ]
+      ],
+      "listed": false
     }
   ]
 }

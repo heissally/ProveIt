@@ -24,10 +24,17 @@ const CONFIG = {
   ],
   "servers": {
     "1373039981890900099": {
-      "name": "heis_sallyy's server",
+      "name": "ProveIt demo server",
       "roles": {
         "1558833453292724345": "Mod",
         "1558963704240930896": "Admin"
+      }
+    },
+    "896185694857343026": {
+      "name": "Lit Protocol",
+      "roles": {
+        "897207532194525255": "Admin",
+        "935597767953358918": "Mod"
       }
     }
   }

@@ -16,6 +16,11 @@ export interface RegistryServer {
   officialSource: string;
   /** role ID → label */
   roles: Record<string, string>;
+  /**
+   * false = still checkable, but left out of the website's server list (for a private test
+   * server; it appears only on /new?test). Website-only: it does not change the action's CID.
+   */
+  listed?: boolean;
 }
 
 /** Check every entry and explain any problem in plain words. */
@@ -40,6 +45,9 @@ export function parseRegistry(raw: unknown): RegistryServer[] {
     if (typeof s?.officialSource !== "string" || (s.officialSource !== "" && !/^https:\/\/\S+$/.test(s.officialSource))) {
       problems.push(`${where}: officialSource must be an https:// link to the project's official site or X (or "" for a test server)`);
     }
+    if (s?.listed !== undefined && typeof s.listed !== "boolean") {
+      problems.push(`${where}: listed must be true or false (or left out, which means true)`);
+    }
     const roles = s?.roles;
     if (!roles || typeof roles !== "object" || Array.isArray(roles)) {
       problems.push(`${where}: roles must be an object of role ID → label`);
@@ -59,9 +67,14 @@ export function parseRegistry(raw: unknown): RegistryServer[] {
   return servers as RegistryServer[];
 }
 
-/** Servers with no official source yet: fine for testing, not for a public release. */
+/** Shown in the website's server list unless marked "listed": false. */
+export function isListed(server: RegistryServer): boolean {
+  return server.listed !== false;
+}
+
+/** Listed servers with no official source yet: fine for testing, not for a public release. */
 export function missingOfficialSource(servers: RegistryServer[]): string[] {
-  return servers.filter((s) => s.officialSource === "").map((s) => s.name);
+  return servers.filter((s) => isListed(s) && s.officialSource === "").map((s) => s.name);
 }
 
 /** The registry in the shape the Discord action carries in its CONFIG. */

@@ -5,6 +5,7 @@
  * ProveIt Lit Action, then show what was checked inside Lit and what was shared.
  */
 import { useEffect, useRef, useState } from "react";
+import { roleName } from "../../../../../shared/discord.ts";
 import { verifyResult, type ProveItResult } from "../../../../../shared/verify.ts";
 import { sharedNote, verifierFailure } from "../../../lib/verifier-text";
 import { ButtonLink, Card, H1, LockIcon, Screen, Tick } from "../../../components/ui";
@@ -103,7 +104,7 @@ export function CallbackView({ provider, code, state, error }: { provider: strin
               <>
                 <Tick ok>Discord confirmed the account is {username}</Tick>
                 <Tick ok>
-                  {`Has the ${String(result.provenRole)} role in ${officialServer(server?.name ?? "")}`}
+                  {`Has the ${roleName(result.provenRole)} role in ${officialServer(server?.name ?? "")}`}
                 </Tick>
               </>
             )}

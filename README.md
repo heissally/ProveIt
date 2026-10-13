@@ -38,6 +38,23 @@ Names and profile pictures are easy to copy. **Company accounts and real Discord
 "Could not verify" means they couldn't prove it. If they refuse to try at all, treat it the same
 way. See [SECURITY.md](SECURITY.md) for the full threat model and its honest limits.
 
+## Which Discord servers can be checked
+
+Only servers in [`registry/servers.json`](registry/servers.json) can be checked. Each entry holds
+the server's ID, its name, and the role IDs that count as Admin or Moderator. These are written
+into the Discord Lit Action's code, so they are part of its CID: a copycat server, or a copycat
+role that is merely *named* "Moderator", never counts.
+
+- **Lit Protocol**: its official Discord, as linked from
+  [developer.litprotocol.com](https://developer.litprotocol.com).
+- **ProveIt demo server**: a private server for testing. It is left out of the website's list.
+
+**Don't see your project's server?** Ask for it to be added: GitHub
+[@heissally](https://github.com/heissally) or salamiademola73@gmail.com. Please include the server
+ID, the role IDs that should count as Admin and as Moderator, and a page on your project's
+official website or X that links to the server. Each addition changes the Discord action's CID
+and signer, so servers are added in batches.
+
 ---
 
 ## How Lit Protocol makes this work
@@ -163,7 +180,7 @@ results. Three levels, from quick to fully independent:
 | Action | CID | Signer address |
 | --- | --- | --- |
 | Google | `QmUsphNDzVSDQ8m9wE6vRVcZk9PfExQHo1N9S8PQmAJUoh` | `0x961a516123667e47dd7466bbf23ecce0013ecfee` |
-| Discord | `QmPRsDgjxDPSY4yAayoWMHa7CFPqxhZrApY5Nh2uknnXSe` | `0x359126777c53be99fb4c97730cd6607e4ed331dd` |
+| Discord | `QmZkED3sSjvo31mQioqasBEaPU8twyJRTT5VTM8mjPYZFg` | `0x140ffa2e09f023f7c390f1f2cba49e728c87d7bf` |
 
 A result counts only if **all** of these hold:
 
@@ -256,6 +273,9 @@ written permission first. To ask, contact me: GitHub [@heissally](https://github
 3. run `npm run web:sync` (it also runs before `npm run dev`);
 4. commit, and deploy the website.
 
+**Hidden test servers:** a registry entry with `"listed": false` can still be checked, but the
+website offers it only on `/new?test`. This is website-only and does not change the action's CID.
+
 Rotating a client secret doesn't need a new PKP: tick the encrypt helper again, run
 `secret:encrypt`, then deploy.
 
@@ -280,7 +300,7 @@ Operations:
   whether a link was published by the real team.
 - Self-service, signed Discord server registration (today, servers are added by hand to
   `registry/servers.json`).
-- A searchable server list and "Don't see your project's server? Ask for it to be added".
+- A searchable server list, once more servers are registered.
 - Moving the Lit account to ChainSecured mode so group changes are on-chain and auditable.
 
 If you'd like to help build any of these, contact me first: GitHub [@heissally](https://github.com/heissally) or salamiademola73@gmail.com.

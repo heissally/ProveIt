@@ -1,10 +1,20 @@
 {
-  "_about": "Official Discord servers ProveIt can check. Only servers listed here can be verified, so a copycat server can never be used. Each role ID maps to one label: Admin or Mod. Role IDs come from the server's admins (Discord Developer Mode → Server Settings → Roles → right-click a role → Copy Role ID). Changing guildId, name or roles changes the Discord action's CID and signer; officialSource is only shown on the website. Leave officialSource empty only for private test servers.",
+  "_about": "Official Discord servers ProveIt can check. Only servers listed here can be verified, so a copycat server can never be used. Each role ID maps to one label: Admin or Mod. To copy IDs, turn on Discord Developer Mode (User Settings → Advanced), then right-click the server icon → Copy Server ID, and right-click a role on a member's profile → Copy Role ID. Changing guildId, name or roles changes the Discord action's CID and signer. officialSource (a page on the project's official website or X that links to the server) and listed are only used by the website. \"listed\": false keeps a private test server checkable but out of the public list (it appears only on /new?test); leave officialSource empty only for such test servers.",
   "servers": [
     {
+      "guildId": "896185694857343026",
+      "name": "Lit Protocol",
+      "officialSource": "https://developer.litprotocol.com",
+      "roles": {
+        "897207532194525255": "Admin",
+        "935597767953358918": "Mod"
+      }
+    },
+    {
       "guildId": "1373039981890900099",
-      "name": "heis_sallyy's server",
+      "name": "ProveIt demo server",
       "officialSource": "",
+      "listed": false,
       "roles": {
         "1558963704240930896": "Admin",
         "1558833453292724345": "Mod"

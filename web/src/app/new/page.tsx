@@ -2,11 +2,12 @@
 
 /** Screen 1 (asker): choose what the stranger claims, then create the ProveIt link. */
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { sortRoles, type RoleLabel } from "../../../../shared/discord.ts";
+import { useEffect, useState } from "react";
+import { roleName, sortRoles, type RoleLabel } from "../../../../shared/discord.ts";
 import { Button, Card, LockIcon, Screen, H1 } from "../../components/ui";
 import { LINK_LIFETIME_SEC, askerPath, newChallengeId, normalizeDomain, type Check } from "../../lib/challenge";
-import { PROVEIT } from "../../lib/config";
+import { officialSourceText } from "../../lib/claims";
+import { ADD_SERVER_HREF, PROVEIT, offeredServers } from "../../lib/config";
 
 type Method = "google" | "discord";
 
@@ -31,18 +32,26 @@ function Choice({ selected, onSelect, title, hint, disabled }: { selected: boole
 
 export default function NewCheck() {
   const router = useRouter();
-  const servers = PROVEIT.servers;
+  // Hidden test servers appear only on /new?test (read after load, so the page stays static).
+  const [servers, setServers] = useState(() => offeredServers(PROVEIT.servers, ""));
   const [method, setMethod] = useState<Method>("google");
   const [domainInput, setDomainInput] = useState("");
   const [guildId, setGuildId] = useState(servers[0]?.guildId ?? "");
   const server = servers.find((s) => s.guildId === guildId);
+  const source = officialSourceText(server);
   const [roles, setRoles] = useState<RoleLabel[]>(server?.roles ?? []);
   const [error, setError] = useState("");
 
   const pickServer = (id: string) => {
     setGuildId(id);
-    setRoles(servers.find((s) => s.guildId === id)?.roles ?? []);
+    setRoles(PROVEIT.servers.find((s) => s.guildId === id)?.roles ?? []);
   };
+  useEffect(() => {
+    const offered = offeredServers(PROVEIT.servers, window.location.search);
+    setServers(offered);
+    if (!guildId && offered[0]) pickServer(offered[0].guildId);
+    // Runs once on load: ?test never changes without a page load.
+  }, []);
   const toggleRole = (r: RoleLabel) => setRoles((cur) => sortRoles(cur.includes(r) ? cur.filter((x) => x !== r) : [...cur, r]));
 
   function create() {
@@ -68,7 +77,7 @@ export default function NewCheck() {
     <Screen role="asker">
       <H1>Is this person really who they say?</H1>
       <p className="mt-3 text-lg text-muted">
-        Got a DM from a &ldquo;recruiter&rdquo;, &ldquo;mod&rdquo; or &ldquo;support agent&rdquo;? Check them before you click anything they send.
+        Got a DM from a &ldquo;recruiter&rdquo;, &ldquo;moderator&rdquo; or &ldquo;support agent&rdquo;? Check them before you click anything they send.
       </p>
 
       <Card className="mt-7">
@@ -78,7 +87,7 @@ export default function NewCheck() {
           <Choice
             selected={method === "discord"}
             onSelect={() => setMethod("discord")}
-            title="Admin or mod in a Discord server"
+            title="Admin or Moderator in a Discord server"
             hint={servers.length ? "Proved with their role in the official server" : "No official servers registered yet"}
             disabled={servers.length === 0}
           />
@@ -111,9 +120,17 @@ export default function NewCheck() {
             >
               {servers.map((s) => <option key={s.guildId} value={s.guildId}>{s.name}</option>)}
             </select>
-            <p className="mt-2 text-muted">
-              Pick it from the project&rsquo;s official X or website. Never use an invite they sent you.
-              {server?.officialSource && <> <a className="text-accent underline" href={server.officialSource} target="_blank" rel="noreferrer">Official source</a></>}
+            {source && (
+              <p className="mt-2">
+                <a className="font-semibold text-success underline-offset-2 hover:underline" href={source.href} target="_blank" rel="noreferrer">
+                  {source.text} <span aria-hidden="true">↗</span>
+                </a>
+              </p>
+            )}
+            <p className="mt-3 text-muted">
+              For your safety, you can only choose from official servers we&rsquo;ve checked. Invite links from the
+              person messaging you are never used, because scammers can copy any server.{" "}
+              Don&rsquo;t see your project&rsquo;s server? <a className="text-accent underline" href={ADD_SERVER_HREF}>Ask for it to be added.</a>
             </p>
             <p className="mt-4 mb-2 font-semibold">Roles that count</p>
             <div className="flex flex-wrap gap-2">
@@ -125,7 +142,7 @@ export default function NewCheck() {
                   aria-pressed={roles.includes(r)}
                   className={`rounded-full px-4 py-2 font-semibold ${roles.includes(r) ? "bg-accent text-white" : "bg-slate-100 text-ink"}`}
                 >
-                  {r}
+                  {roleName(r)}
                 </button>
               ))}
             </div>

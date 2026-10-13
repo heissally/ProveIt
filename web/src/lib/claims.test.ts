@@ -1,28 +1,28 @@
 import { describe, expect, it } from "vitest";
 import type { Check } from "./challenge";
-import { claimPhrase, expectedFor, officialServer, pasteMessage, rolesText, whatToDo } from "./claims";
+import { claimPhrase, expectedFor, officialServer, officialSourceText, pasteMessage, rolesText, whatToDo } from "./claims";
 import { PROVEIT } from "./config";
 
 const ID = "Xq3vT9bLm2Rk8WdZp4NcAa";
-const server = { guildId: "1373039981890900099", name: "Lit Protocol", officialSource: "", roles: ["Admin", "Mod"] as ("Admin" | "Mod")[] };
+const server = { guildId: "1373039981890900099", name: "Lit Protocol", officialSource: "", roles: ["Admin", "Mod"] as ("Admin" | "Mod")[], listed: true };
 const google: Check = { method: "google", challengeId: ID, expiresAt: 100, domain: "coinbase.com" };
 const discord: Check = { method: "discord", challengeId: ID, expiresAt: 100, guildId: server.guildId, roles: ["Admin", "Mod"] };
 
 describe("wording", () => {
   it("lists roles naturally", () => {
-    expect(rolesText(["Mod"])).toBe("Mod");
-    expect(rolesText(["Admin", "Mod"])).toBe("Admin or Mod");
+    expect(rolesText(["Mod"])).toBe("Moderator");
+    expect(rolesText(["Admin", "Mod"])).toBe("Admin or Moderator");
   });
 
   it("phrases each kind of claim", () => {
     expect(claimPhrase(google)).toBe("work at coinbase.com");
-    expect(claimPhrase(discord, server)).toBe("are Admin or Mod in Lit Protocol");
-    expect(claimPhrase({ ...discord, roles: ["Mod"] }, server)).toBe("are Mod in Lit Protocol");
+    expect(claimPhrase(discord, server)).toBe("are Admin or Moderator in Lit Protocol");
+    expect(claimPhrase({ ...discord, roles: ["Mod"] }, server)).toBe("are Moderator in Lit Protocol");
   });
 
   it("names a server without ever doubling the word 'server'", () => {
     expect(officialServer("Lit Protocol")).toBe("the official Lit Protocol server");
-    expect(officialServer("heis_sallyy's server")).toBe("the official heis_sallyy's server");
+    expect(officialServer("ProveIt demo server")).toBe("the official ProveIt demo server");
     expect(officialServer(" Gaming Server ")).toBe("the official Gaming Server");
     expect(officialServer("Serverless Devs")).toBe("the official Serverless Devs server");
   });
@@ -69,5 +69,26 @@ describe("expectedFor", () => {
 
   it("refuses a Discord check for a server this site doesn't know", () => {
     expect(expectedFor(discord, undefined)).toBeNull();
+  });
+});
+
+describe("officialSourceText", () => {
+  const lit = { guildId: "896185694857343026", name: "Lit Protocol", officialSource: "https://developer.litprotocol.com", roles: ["Admin", "Mod"] as ("Admin" | "Mod")[], listed: true };
+
+  it("says where the server is linked from, without showing the raw link", () => {
+    expect(officialSourceText(lit)).toEqual({
+      text: "Official server, linked from Lit Protocol’s website",
+      href: "https://developer.litprotocol.com",
+    });
+  });
+
+  it("names an X account, and handles names ending in s", () => {
+    expect(officialSourceText({ ...lit, name: "Acme Labs", officialSource: "https://x.com/acmelabs" })?.text)
+      .toBe("Official server, linked from Acme Labs’ X account");
+  });
+
+  it("shows nothing for a test server without a source", () => {
+    expect(officialSourceText({ ...lit, officialSource: "" })).toBeNull();
+    expect(officialSourceText(undefined)).toBeNull();
   });
 });

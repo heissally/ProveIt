@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { callActionFunction } from "../lit-actions/test/harness.ts";
 import { readActionSource } from "../scripts/lib/lit-api.ts";
-import { DISCORD_SCOPES, ROLE_ORDER, sortRoles } from "./discord.ts";
+import { DISCORD_SCOPES, ROLE_ORDER, roleName, sortRoles } from "./discord.ts";
 
 /** Read one of the Discord action's top-level constants, inside its sandbox. */
 async function actionConstant(name: string): Promise<unknown> {
@@ -25,5 +25,17 @@ describe("Discord rules", () => {
 
   it("match the Discord Lit Action's own role labels and order exactly", async () => {
     expect(await actionConstant("LABELS")).toEqual(ROLE_ORDER);
+  });
+});
+
+describe("roleName", () => {
+  it("spells out Moderator for people, while the signed code word stays Mod", () => {
+    expect(roleName("Mod")).toBe("Moderator");
+    expect(roleName("Admin")).toBe("Admin");
+    expect(ROLE_ORDER).toEqual(["Admin", "Mod"]);
+  });
+
+  it("shows anything unexpected as it is", () => {
+    expect(roleName("Owner")).toBe("Owner");
   });
 });

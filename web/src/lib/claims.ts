@@ -2,23 +2,42 @@
  * What a check claims, in plain words, and the exact claim object the signed
  * result must contain for the asker's page to accept it.
  */
-import type { RoleLabel } from "../../../shared/discord.ts";
+import { roleName, type RoleLabel } from "../../../shared/discord.ts";
 import type { Expected } from "../../../shared/verify.ts";
 import type { Check } from "./challenge";
 import { PROVEIT, type ServerSettings } from "./config";
 
-/** "Mod", "Admin or Mod". */
+/** "Moderator", "Admin or Moderator". */
 export function rolesText(roles: RoleLabel[]): string {
-  return roles.length <= 1 ? roles.join("") : `${roles.slice(0, -1).join(", ")} or ${roles[roles.length - 1]}`;
+  const names = roles.map(roleName);
+  return names.length <= 1 ? names.join("") : `${names.slice(0, -1).join(", ")} or ${names[names.length - 1]}`;
 }
 
 /**
- * "the official Lit Protocol server", but "the official heis_sallyy's server" when
+ * "the official Lit Protocol server", but "the official ProveIt demo server" when
  * the name already ends in "server", so the word never doubles.
  */
 export function officialServer(name: string): string {
   const n = name.trim();
   return /\bserver$/i.test(n) ? `the official ${n}` : `the official ${n} server`;
+}
+
+/**
+ * Why the asker can trust this is the real server, in plain words instead of a raw link:
+ * "Official server, linked from Lit Protocol’s website". Null for test servers with no source.
+ */
+export function officialSourceText(server?: ServerSettings): { text: string; href: string } | null {
+  if (!server?.officialSource) return null;
+  let host = "";
+  try {
+    host = new URL(server.officialSource).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+  const name = server.name.trim();
+  const whose = /s$/i.test(name) ? `${name}’` : `${name}’s`;
+  const where = host === "x.com" || host === "twitter.com" ? "X account" : "website";
+  return { text: `Official server, linked from ${whose} ${where}`, href: server.officialSource };
 }
 
 /** Ending for "…prove you ___" / "…confirm you ___". */
@@ -42,7 +61,7 @@ export function whatToDo(method: Check["method"]): Array<{ text: string; kind: "
     : [
         { text: "Don't click links they send", kind: "dont" },
         { text: "Never “verify your wallet” for them", kind: "dont" },
-        { text: "Report them to the real mods", kind: "do" },
+        { text: "Report them to the real moderators", kind: "do" },
       ];
 }
 

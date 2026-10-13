@@ -1,5 +1,6 @@
 /** The asker's outcome screens (mockup screens 6 and 7, for both methods). */
 import type { ProveItResult } from "../../../shared/verify.ts";
+import { roleName } from "../../../shared/discord.ts";
 import { explainReason } from "../../../shared/reasons.ts";
 import type { Check } from "../lib/challenge";
 import { checkCode } from "../lib/challenge";
@@ -33,7 +34,7 @@ export function Verified({ check, result, server, nowSec }: { check: Check; resu
           </>
         ) : (
           <>
-            <p className="mt-3 text-success">{`${String(result.provenRole)} in the official server`}</p>
+            <p className="mt-3 text-success">{`${roleName(result.provenRole)} in the official server`}</p>
             <p className="mt-1 font-heading text-2xl font-bold text-ink">{server?.name}</p>
           </>
         )}
@@ -51,7 +52,7 @@ export function Verified({ check, result, server, nowSec }: { check: Check; resu
         {check.method === "discord" && (
           <>
             <Row label="Discord username"><span className={mono}>{subject.discordUsername}</span></Row>
-            <Row label="Role">{String(result.provenRole)}</Row>
+            <Row label="Role">{roleName(result.provenRole)}</Row>
           </>
         )}
         <Row label="Check code"><span className={mono}>{checkCode(check.challengeId)} · matches</span></Row>
@@ -103,7 +104,7 @@ export function CouldNotVerify({ check, result, server }: { check: Check; result
       )}
       {check.method === "discord" && (result.reason === "role_missing" || result.reason === "not_member") && (
         <div className="mt-4">
-          <Notice tone="warn">Copycats often join the real server and copy a mod's name and picture. They can't copy the role.</Notice>
+          <Notice tone="warn">Copycats often join the real server and copy a moderator's name and picture. They can't copy the role.</Notice>
         </div>
       )}
 

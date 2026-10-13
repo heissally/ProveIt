@@ -14,7 +14,7 @@ import { join } from "node:path";
 import { readConfig } from "./lib/action-config.ts";
 import { loadLitConfig } from "./lib/config.ts";
 import { REPO_ROOT, getActionCid, readActionSource } from "./lib/lit-api.ts";
-import { loadRegistry } from "./lib/registry.ts";
+import { isListed, loadRegistry } from "./lib/registry.ts";
 
 const lit = await loadLitConfig();
 const problems: string[] = [];
@@ -46,12 +46,22 @@ for (const m of ["google", "discord"] as const) {
 // the registry file adds the official-source links shown to askers.
 const actionServers = readConfig(code.discord).servers ?? {};
 const registry = await loadRegistry().catch(() => []);
-const servers = Object.entries(actionServers).map(([guildId, s]) => ({
-  guildId,
-  name: s.name,
-  officialSource: registry.find((r) => r.guildId === guildId)?.officialSource ?? "",
-  roles: ["Admin", "Mod"].filter((l) => Object.values(s.roles).includes(l)),
-}));
+const servers = Object.entries(actionServers).map(([guildId, s]) => {
+  const entry = registry.find((r) => r.guildId === guildId);
+  return {
+    guildId,
+    name: s.name,
+    officialSource: entry?.officialSource ?? "",
+    roles: ["Admin", "Mod"].filter((l) => Object.values(s.roles).includes(l)),
+    listed: entry ? isListed(entry) : true,
+  };
+});
+// Same order as registry/servers.json, so the first registered server is the default on /new.
+const order = (guildId: string) => {
+  const i = registry.findIndex((r) => r.guildId === guildId);
+  return i < 0 ? registry.length : i;
+};
+servers.sort((a, b) => order(a.guildId) - order(b.guildId));
 if (registry.some((r) => !actionServers[r.guildId])) {
   problems.push("registry/servers.json has servers the deployed Discord action doesn't know yet (run npm run action:deploy -- discord)");
 }
@@ -65,6 +75,6 @@ await writeFile(join(outDir, "action-code.json"), JSON.stringify({ _note: note, 
 console.log("\n✓ Synced Lit Action code and public settings into web/src/generated/");
 console.log(`  google  ${methods.google.actionCid || "(not deployed)"}  signer ${methods.google.signer || "-"}`);
 console.log(`  discord ${methods.discord.actionCid || "(not deployed)"}  signer ${methods.discord.signer || "-"}`);
-console.log(`  servers ${servers.map((s) => s.name).join(", ") || "(none)"}`);
+console.log(`  servers ${servers.map((s) => s.name + (s.listed ? "" : " (hidden: /new?test)")).join(", ") || "(none)"}`);
 for (const p of problems) console.log(`  ⚠ ${p}`);
 console.log("");

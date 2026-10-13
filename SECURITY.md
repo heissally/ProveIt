@@ -36,7 +36,7 @@ the README).
 | Method | CID | Signer address |
 | --- | --- | --- |
 | Google | `QmUsphNDzVSDQ8m9wE6vRVcZk9PfExQHo1N9S8PQmAJUoh` | `0x961a516123667e47dd7466bbf23ecce0013ecfee` |
-| Discord | `QmPRsDgjxDPSY4yAayoWMHa7CFPqxhZrApY5Nh2uknnXSe` | `0x359126777c53be99fb4c97730cd6607e4ed331dd` |
+| Discord | `QmZkED3sSjvo31mQioqasBEaPU8twyJRTT5VTM8mjPYZFg` | `0x140ffa2e09f023f7c390f1f2cba49e728c87d7bf` |
 
 These change whenever an action's code or settings change. `config/lit.json` always holds the
 current values.

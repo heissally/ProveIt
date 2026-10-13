@@ -6,7 +6,7 @@ import { howItWorks, sharedNote, verifierFailure } from "./verifier-text";
 const ID = "Xq3vT9bLm2Rk8WdZp4NcAa";
 const google: Check = { method: "google", challengeId: ID, expiresAt: 100, domain: "prove-it.com.ng" };
 const discord: Check = { method: "discord", challengeId: ID, expiresAt: 100, guildId: "1373039981890900099", roles: ["Mod"] };
-const server = { guildId: discord.guildId, name: "heis_sallyy's server", officialSource: "", roles: ["Mod"] as "Mod"[] };
+const server = { guildId: discord.guildId, name: "ProveIt demo server", officialSource: "", roles: ["Mod"] as "Mod"[], listed: false };
 
 const result = (fields: Partial<ProveItResult>): ProveItResult =>
   ({ v: 1, type: "proveit.result.v1", method: "google", status: "not_verified", reason: "no_hd", claim: {}, challengeHash: "0x", issuedAt: 1, expiresAt: 100, ...fields }) as ProveItResult;
@@ -50,7 +50,7 @@ describe("lock box: what was shared", () => {
 
   it("Discord verified: username and role", () => {
     const r = result({ method: "discord", status: "verified", reason: "ok", provenRole: "Mod", subject: { discordUsername: "sa_llyy", discordUserId: "1" } });
-    expect(sharedNote(discord, r)).toBe("Only your username (sa_llyy) and your Mod role were shared. Nothing else from your Discord account was shared.");
+    expect(sharedNote(discord, r)).toBe("Only your username (sa_llyy) and your Moderator role were shared. Nothing else from your Discord account was shared.");
   });
 
   it("Discord role missing: username and the reason, no role", () => {
@@ -76,8 +76,8 @@ describe("'How this works' points", () => {
     const text = howItWorks(discord, server).join(" ");
     expect(text).toContain("You sign in on Discord’s own page");
     expect(text).toContain("read your member info in your servers");
-    expect(text).toContain("looks only at heis_sallyy's server");
-    expect(text).toContain("whether you have Mod in heis_sallyy's server");
+    expect(text).toContain("looks only at ProveIt demo server");
+    expect(text).toContain("whether you have Moderator in ProveIt demo server");
   });
 
   it("never promises that whoever runs the website can't see a sign-in", () => {

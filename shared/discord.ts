@@ -13,6 +13,16 @@ export function sortRoles(roles: string[]): RoleLabel[] {
 }
 
 /**
+ * How a role reads on the website. "Mod" stays the code word inside the action, its
+ * signed results and links (so results and links never change); people read "Moderator".
+ */
+const ROLE_NAMES: Record<RoleLabel, string> = { Admin: "Admin", Mod: "Moderator" };
+
+export function roleName(label: unknown): string {
+  return ROLE_NAMES[label as RoleLabel] ?? String(label);
+}
+
+/**
  * What the Discord sign-in asks for: who you are, and your member info (roles) in
  * servers. Never "guilds", the list of all your servers.
  */

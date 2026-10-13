@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { missingOfficialSource, parseRegistry, registryForAction } from "./registry.ts";
+import { isListed, missingOfficialSource, parseRegistry, registryForAction } from "./registry.ts";
 
 const GUILD = "1100000000000000001";
 const good = {
@@ -57,5 +57,28 @@ describe("registryForAction", () => {
     expect(registryForAction([{ ...good, name: " Lit Protocol " }])).toEqual({
       [GUILD]: { name: "Lit Protocol", roles: good.roles },
     });
+  });
+});
+
+describe("listed (website-only visibility)", () => {
+  const demo = { ...good, guildId: "1100000000000000002", name: "ProveIt demo server", officialSource: "", listed: false };
+
+  it("is optional and means listed when left out", () => {
+    expect(isListed(parseRegistry(reg(good))[0])).toBe(true);
+    expect(isListed(parseRegistry(reg(demo))[0])).toBe(false);
+  });
+
+  it("must be true or false", () => {
+    expect(() => parseRegistry(reg({ ...good, listed: "no" }))).toThrow(/listed must be true or false/);
+  });
+
+  it("doesn't warn about a missing officialSource on a hidden test server", () => {
+    expect(missingOfficialSource(parseRegistry(reg(good, demo)))).toEqual([]);
+    expect(missingOfficialSource(parseRegistry(reg({ ...demo, listed: true })))).toEqual(["ProveIt demo server"]);
+  });
+
+  it("is not part of the action's registry, so hiding a server doesn't change the CID", () => {
+    const [server] = parseRegistry(reg(demo));
+    expect(registryForAction([server])).toEqual({ [demo.guildId]: { name: demo.name, roles: demo.roles } });
   });
 });

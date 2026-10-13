@@ -20,8 +20,8 @@
     ],
     "clientId": "1558835182889467954",
     "encryptedClientSecret": "70ea928ce47197791e6a277f517dc0791d3bdd580be38704fd110275dba93d2b865bd6cfa7ee5669b5dd473abdf04b020654aa3d916d3b5ca262acae",
-    "actionCid": "QmPRsDgjxDPSY4yAayoWMHa7CFPqxhZrApY5Nh2uknnXSe",
-    "signer": "0x359126777c53be99fb4c97730cd6607e4ed331dd",
-    "previousActionCid": "QmZmW4g87E7rtWNpUf4kBXqWJv1KbVMz2H7SSpDBTtyws3"
+    "actionCid": "QmZkED3sSjvo31mQioqasBEaPU8twyJRTT5VTM8mjPYZFg",
+    "signer": "0x140ffa2e09f023f7c390f1f2cba49e728c87d7bf",
+    "previousActionCid": "QmPRsDgjxDPSY4yAayoWMHa7CFPqxhZrApY5Nh2uknnXSe"
   }
 }

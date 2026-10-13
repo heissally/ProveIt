@@ -19,6 +19,8 @@ export interface ServerSettings {
   officialSource: string;
   /** Labels this server's registry defines. */
   roles: RoleLabel[];
+  /** false = a private test server: checkable, but only offered on /new?test. */
+  listed: boolean;
 }
 
 export const PROVEIT = generated as unknown as {
@@ -30,3 +32,12 @@ export const PROVEIT = generated as unknown as {
 export function findServer(guildId: string): ServerSettings | undefined {
   return PROVEIT.servers.find((s) => s.guildId === guildId);
 }
+
+/** The servers /new offers: listed ones, plus hidden test servers when the page is opened with ?test. */
+export function offeredServers(servers: ServerSettings[], search: string): ServerSettings[] {
+  const showHidden = new URLSearchParams(search).has("test");
+  return servers.filter((s) => s.listed !== false || showHidden);
+}
+
+/** Where people ask for their project's Discord server to be added. */
+export const ADD_SERVER_HREF = "mailto:salamiademola73@gmail.com?subject=" + encodeURIComponent("Please add our Discord server to ProveIt");
