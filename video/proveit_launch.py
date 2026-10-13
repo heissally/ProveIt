@@ -355,7 +355,7 @@ class ProveItLaunch(VoiceoverScene):
             self.cue(3)
             server = form_field("Official Discord server")
             server_name = T("Acme Discord", 24, INK).move_to(server[1], aligned_edge=LEFT).shift(RIGHT * 0.25)
-            roles = VGroup(T("Role:", 20, MUTED), tag("Admin", DISCORD), tag("Mod", DISCORD)).arrange(RIGHT, buff=0.2)
+            roles = VGroup(T("Role:", 20, MUTED), tag("Admin", DISCORD), tag("Moderator", DISCORD)).arrange(RIGHT, buff=0.2)
             discord_form = VGroup(server, server_name, roles.next_to(server, DOWN, buff=0.2))
             discord_form.move_to([0, CY + 1.6, 0])
             self.play(FadeOut(VGroup(ask, theirs, no, by_you)),
@@ -486,7 +486,7 @@ class ProveItLaunch(VoiceoverScene):
             self.play(GrowArrow(reply), FadeIn(a), run_time=0.7)
 
             self.cue(2)
-            ask2, q2, reply2, a2 = exchange("role =\nAdmin or Mod?", "yes")
+            ask2, q2, reply2, a2 = exchange("role =\nAdmin or\nModerator?" if SQUARE else "role =\nAdmin or Moderator?", "yes")
             self.play(FadeOut(VGroup(ask, q, reply, a)), run_time=0.3)
             self.play(GrowArrow(ask2), FadeIn(q2), run_time=0.7)
             self.play(GrowArrow(reply2), FadeIn(a2), run_time=0.6)
@@ -511,7 +511,7 @@ class ProveItLaunch(VoiceoverScene):
             self.play(FadeIn(dom, shift=UP * 0.5), run_time=0.8)
 
             self.cue(5)
-            usr = tag("kai · Admin or Mod", DISCORD)
+            usr = tag("kai · Admin or Moderator", DISCORD)
             pair = VGroup(dom.copy(), T("or", 22, MUTED), usr).arrange(RIGHT, buff=0.25)
             pair.move_to([0 if SQUARE else inner.get_center()[0] + 1.8, out_y, 0])
             self.play(dom.animate.move_to(pair[0]), FadeIn(pair[1]), FadeIn(usr, shift=UP * 0.4), run_time=0.8)
