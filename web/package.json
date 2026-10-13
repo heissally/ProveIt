@@ -2,7 +2,7 @@
   "name": "proveit-web",
   "version": "0.0.1",
   "private": true,
-  "license": "MIT",
+  "license": "SEE LICENSE IN ../LICENSE",
   "scripts": {
     "dev": "next dev --port 3000",
     "build": "next build",

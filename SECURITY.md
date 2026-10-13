@@ -26,7 +26,8 @@ not by the ProveIt operator.
 
 **What that guarantee is about:** the *signed result*. The asker's result page is served by the
 ProveIt website. A dishonest operator could serve a page that *displays* "Verified" without a
-real result. The defences are that the code is open source, the signer addresses are published
+real result. The defences are that the code is source-available (anyone may read it, see
+[LICENSE](LICENSE)), the signer addresses are published
 (README, `/verify`), and anyone can verify a result by hand without trusting this website (see
 the README).
 

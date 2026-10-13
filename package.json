@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "description": "ProveIt: a 'prove it' link that checks a stranger's work account or Discord role inside a Lit Action and signs the result.",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "engines": {
     "node": ">=22.18"

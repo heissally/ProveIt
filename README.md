@@ -6,7 +6,7 @@ Discord's own page, a [Lit Protocol](https://developer.litprotocol.com) Lit Acti
 answer inside a sealed enclave, and you get **Verified** or **Could not verify**. Nobody can
 forge a "Verified" result, including whoever runs ProveIt.
 
-**Live:** https://prove-it.com.ng
+**Live:** https://prove-it.com.ng · **License:** [source-available, all rights reserved](LICENSE)
 
 **Google: "works at a company"**
 
@@ -138,7 +138,8 @@ its server logs.
 
 ## Verify a result yourself
 
-You don't have to trust the ProveIt website. Three levels, from quick to fully independent:
+You don't have to trust the ProveIt website. The [license](LICENSE) allows these tools for checking
+results. Three levels, from quick to fully independent:
 
 1. **In the browser:** paste your ProveIt link into https://prove-it.com.ng/verify. The check runs
    in your browser with [`shared/verify.ts`](shared/verify.ts).
@@ -225,12 +226,7 @@ SECURITY.md                           threat model and residual risks
 
 ## Tests
 
-```bash
-npm install
-npm test
-```
-
-The tests use Vitest and run every success and failure case against the **real action files**:
+The repo includes Vitest tests that run every success and failure case against the **real action files**:
 
 - **Google:** right domain, wrong domain, lookalike, no `hd`, wrong nonce, expired, and more;
 - **Discord:** has role, missing role, not a member, a copycat role ID, and more;
@@ -238,55 +234,20 @@ The tests use Vitest and run every success and failure case against the **real a
 - **Signing:** the action signs exactly the result it returns;
 - **Website:** its verification logic and the server function.
 
+If you'd like to run the test suite as part of a review, ask me first: GitHub [@heissally](https://github.com/heissally) or salamiademola73@gmail.com.
+
 ---
 
-## Run your own copy
+## Using or building on ProveIt
 
-You'll need:
+ProveIt is **source-available, not open source** (see [LICENSE](LICENSE)). You may read all of its
+code to review it and understand how it works, and you may use the included verification tools to
+check results (see [Verify a result yourself](#verify-a-result-yourself)).
 
-- Node.js 22.18 or newer;
-- a [Lit Chipotle](https://dashboard.chipotle.litprotocol.com/dapps/dashboard/) account with
-  credits (about 1 credit, $0.01, per check);
-- a Google Cloud project;
-- a Discord application;
-- an [Upstash](https://upstash.com) Redis database (free tier);
-- a [Vercel](https://vercel.com) account (free tier).
+Copying, changing, running or deploying your own copy, or using ProveIt in any other way, needs my
+written permission first. To ask, contact me: GitHub [@heissally](https://github.com/heissally) or salamiademola73@gmail.com.
 
-1. **Clone and install:**
-   1. Run `git clone …` and then `npm install`.
-   2. Copy `.env.example` to `.env.local` and add your Lit **account** key.
-   3. Make a **dev usage key** that can execute in your two groups and in a `tools` group, and add
-      it as `LIT_DEV_USAGE_KEY`.
-2. **Lit Dashboard setup:**
-   1. Create two wallets (PKPs), one per provider, and put their addresses in `config/lit.json`.
-   2. Create the groups `proveit-google` and `proveit-discord`. Each lists only its own PKP plus
-      the CID of `proveit-encrypt-secret.js`.
-   3. Create a `proveit-tools` group with the CID of `proveit-signer-lookup.js`.
-
-   Use `npm run lit:cids` for the CIDs. Never use the "All" options.
-3. **OAuth apps:**
-   - **Google:** a "Web application" client with scopes `openid email`, and redirect
-     `https://<your-domain>/callback/google` (plus `http://localhost:3000/callback/google`).
-   - **Discord:** redirect `https://<your-domain>/callback/discord`. Leave Public Client off.
-   - Put your server and its role IDs in `registry/servers.json`.
-   - Put your redirect addresses in `config/lit.json` → `redirectUris`.
-4. **Lock the secrets and deploy the actions:**
-   1. Run `npm run secret:encrypt -- google` (it refuses unless the group is clean), then the same
-      with `-- discord`.
-   2. Run `npm run action:deploy -- google`, then `-- discord`. Each prints its CID, signer and a
-      Dashboard to-do: register the CID, tick it in its group, untick the encrypt helper.
-5. **Website:**
-   1. Copy `web/.env.example` to `web/.env.local`.
-   2. Add a separate **execute-only** usage key for the two groups (not `tools`) and your Upstash
-      REST URL and token.
-   3. Run `npm run dev` and open http://localhost:3000.
-6. **Go live:**
-   1. Import the repo into Vercel with **Root Directory = `web`**, and add the same three
-      environment variables.
-   2. The region is set to Frankfurt in [`web/vercel.json`](web/vercel.json); change it to match
-      your Upstash region.
-   3. Add your domain.
-   4. Publish the Google consent screen. It needs a home page and a privacy policy link.
+## Maintainer notes
 
 **Any change to an action's code or `CONFIG` changes its CID and signer.** After any change:
 
@@ -298,7 +259,7 @@ You'll need:
 Rotating a client secret doesn't need a new PKP: tick the encrypt helper again, run
 `secret:encrypt`, then deploy.
 
-### Operations notes
+Operations:
 
 - **Google user cap:** the Google consent screen shows a "user cap". It applies to apps using
   sensitive or restricted scopes. ProveIt uses only `openid` and `email`, which are
@@ -310,7 +271,7 @@ Rotating a client secret doesn't need a new PKP: tick the encrypt helper again, 
 
 ---
 
-## Ideas for contributors
+## Possible future ideas
 
 - GitHub organization membership as a third proof method.
 - Telegram and X, through official team lists.
@@ -322,10 +283,13 @@ Rotating a client secret doesn't need a new PKP: tick the encrypt helper again, 
 - A searchable server list and "Don't see your project's server? Ask for it to be added".
 - Moving the Lit account to ChainSecured mode so group changes are on-chain and auditable.
 
+If you'd like to help build any of these, contact me first: GitHub [@heissally](https://github.com/heissally) or salamiademola73@gmail.com.
+
 ## Security, privacy and license
 
 - [SECURITY.md](SECURITY.md): what the result guarantees, the trust model, and residual risks.
   Report vulnerabilities privately to salamiademola73@gmail.com.
 - [Privacy](https://prove-it.com.ng/privacy): signed results are kept 30 days; there are no
   accounts, cookies or analytics.
-- [MIT License](LICENSE).
+- [License](LICENSE): source-available, all rights reserved. Reading the code and verifying
+  results are allowed; anything else needs my written permission (GitHub [@heissally](https://github.com/heissally) or salamiademola73@gmail.com).

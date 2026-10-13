@@ -1,21 +1,46 @@
-MIT License
+ProveIt: source-available license (all rights reserved)
 
-Copyright (c) 2026 Salami Sally
+Copyright (c) 2026 Salami Sally. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This software, including its source code, Lit Actions, scripts, website and
+documentation (together, "ProveIt"), is made available for reading only. No
+rights are granted except the ones written below.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+You may:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+  1. Read ProveIt's source code, to review it, audit it and understand how
+     ProveIt works.
+
+  2. Verify ProveIt results using the tools included for that purpose,
+     unmodified and only to check whether a ProveIt result is genuine, or
+     whether the published Lit Action fingerprints (CIDs) and signer
+     addresses match this code. Those tools are the /verify page,
+     `npm run verify:result`, `npm run lit:cids` and the
+     `lit-actions/proveit-signer-lookup.js` Lit Action.
+
+You may not, without my prior written permission:
+
+  - copy (except as needed to do 1 and 2 above), modify, merge, publish,
+    distribute, sublicense or sell ProveIt or any part of it, including the
+    Lit Actions;
+  - run, host or deploy your own copy of ProveIt or any part of it; or
+  - use ProveIt for any private, internal, commercial or non-commercial
+    purpose other than 1 and 2 above.
+
+To ask for permission, contact me:
+
+  GitHub: @heissally
+  Email:  salamiademola73@gmail.com
+
+This license covers every version of ProveIt in this repository, including
+earlier commits, whatever license file those commits contain.
+
+Third-party software that ProveIt uses (for example Next.js, React and
+ethers) is covered by its own license, not by this one.
+
+PROVEIT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDER
+BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+PROVEIT OR THE USE OF OR OTHER DEALINGS IN PROVEIT.
