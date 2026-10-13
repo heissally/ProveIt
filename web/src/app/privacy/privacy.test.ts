@@ -26,6 +26,18 @@ describe("privacy page matches the code", () => {
     expect(await page()).toContain("It never requests your list of servers");
   });
 
+  it("describes the visitor statistics and the daily totals honestly", async () => {
+    const text = await page();
+    expect(text).toContain("Vercel Web Analytics");
+    expect(text).toContain("without cookies");
+    expect(text).toContain("removes check IDs, claimed domains and servers, and");
+    expect(text).toContain("sign-in codes from the page address");
+    expect(text).toContain("deleted automatically after about 13 months");
+    expect(text).not.toMatch(/no ProveIt accounts, cookies, analytics/);
+    const { STATS_TTL_SEC } = await import("../../server/stats");
+    expect(Math.round(STATS_TTL_SEC / 86400 / 30)).toBe(13);
+  });
+
   it("does not promise that whoever runs ProveIt could never see a sign-in", async () => {
     expect(await page()).not.toMatch(/not even (the )?operator|no one (else )?can see/i);
   });

@@ -8,7 +8,7 @@ import { Card, H1, Screen } from "../../components/ui";
 export const metadata: Metadata = { title: "Privacy · ProveIt" };
 
 const CONTACT = "salamiademola73@gmail.com";
-const UPDATED = "12 October 2026";
+const UPDATED = "13 October 2026";
 
 const H2 = ({ children }: { children: React.ReactNode }) => <h2 className="mb-2 font-heading text-xl font-bold">{children}</h2>;
 const List = ({ items }: { items: React.ReactNode[] }) => (
@@ -23,7 +23,8 @@ export default function Privacy() {
 
       <p className="mt-5 text-lg">
         ProveIt checks one thing about a person (that they control a work Google account at a company domain, or hold a role in an
-        official Discord server) and shares only the result. There are no ProveIt accounts, cookies, analytics or ads.
+        official Discord server) and shares only the result. There are no ProveIt accounts, cookies or ads. Visits are
+        counted without cookies, as described below.
       </p>
 
       <div className="mt-6 space-y-4 leading-relaxed">
@@ -58,8 +59,21 @@ export default function Privacy() {
               "To limit how many checks run, a counter keyed by a salted hash of your IP address (never the address itself). It is deleted automatically after 10 minutes.",
               "While you are away on Google's or Discord's page, your browser tab keeps a temporary note of the check, which is removed when you come back or close the tab.",
               "The one-time sign-in and any Google or Discord tokens are used once inside the Lit enclave and are never stored or returned.",
+              "Daily totals of how many ProveIt links were created and how many checks ended Verified or Could not verify, for each method (Google or Discord). These are plain numbers, with no check IDs, domains, usernames or IP addresses, and they are deleted automatically after about 13 months.",
             ]}
           />
+        </Card>
+
+        <Card>
+          <H2>Visitor statistics</H2>
+          <p>
+            ProveIt uses Vercel Web Analytics to count visits, without cookies. For each page view it records the type of page,
+            the website you came from, your approximate location (country, region and city), and your browser, operating
+            system and device type. Before anything is sent, ProveIt removes check IDs, claimed domains and servers, and
+            sign-in codes from the page address, so only the page type (for example &ldquo;/v/[id]&rdquo;) is recorded.
+            Vercel recognises repeat visits with a hash that is discarded after 24 hours, and the data is not tied to your IP
+            address. It is used only for totals.
+          </p>
         </Card>
 
         <Card>
@@ -68,8 +82,8 @@ export default function Privacy() {
             items={[
               "Google or Discord: your sign-in.",
               "Lit Protocol: runs the check inside its enclave. ProveIt asks Lit not to keep the request in its server logs.",
-              "Vercel: hosts this website and may keep standard request logs under its own policy.",
-              "Upstash: stores the signed results and rate-limit counters described above.",
+              "Vercel: hosts this website, counts visits (Web Analytics, described above) and may keep standard request logs under its own policy.",
+              "Upstash: stores the signed results, rate-limit counters and daily totals described above.",
             ]}
           />
           <p className="mt-3">ProveIt does not sell, rent or share data with anyone else.</p>

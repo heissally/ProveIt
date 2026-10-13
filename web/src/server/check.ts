@@ -11,6 +11,7 @@ import { ethers } from "ethers";
 import { canonical } from "../../../shared/canonical.ts";
 import { challengeHashFor } from "../../../shared/verify.ts";
 import { runLitAction } from "./lit";
+import { recordEvent } from "./stats";
 import { saveResult, takeRateLimit, type Limits, type RedisEnv } from "./store";
 
 export interface CheckDeps {
@@ -81,6 +82,8 @@ export async function handleCheck(body: unknown, ip: string, deps: CheckDeps): P
   if (!genuine) return { status: 502, body: { ok: false, error: "unexpected" } };
 
   const signed = { result: out.result, signature: String(out.signature) };
+  // Private daily count (numbers only). Never lets a counting problem affect the check.
+  await recordEvent(deps.redis, out.result?.status === "verified" ? "verified" : "not_verified", method, deps.nowSec(), deps.fetch).catch(() => undefined);
   let stored = true;
   try {
     await saveResult(deps.redis, challengeHash, signed, deps.fetch);

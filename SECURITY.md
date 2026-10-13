@@ -121,5 +121,10 @@ See the [privacy page](https://prove-it.com.ng/privacy). In short:
 
 - Signed results are kept for 30 days.
 - Rate-limit counters hold a salted IP hash for 10 minutes.
-- There are no accounts, cookies or analytics.
+- There are no accounts or cookies.
+- Visits are counted with cookieless Vercel Web Analytics. Check IDs, claimed domains and servers,
+  and sign-in codes are removed from page addresses in the browser before anything is sent
+  (`web/src/lib/analytics-redact.ts`).
+- Daily totals of links created and Verified / Could not verify results are kept as plain numbers
+  for about 13 months, viewable only with the maintainer's stats password.
 - Names, emails, Google IDs, tokens and passwords are never stored or shared.

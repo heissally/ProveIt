@@ -290,6 +290,8 @@ If you'd like to help build any of these, contact me first: GitHub [@heissally](
 - [SECURITY.md](SECURITY.md): what the result guarantees, the trust model, and residual risks.
   Report vulnerabilities privately to salamiademola73@gmail.com.
 - [Privacy](https://prove-it.com.ng/privacy): signed results are kept 30 days; there are no
-  accounts, cookies or analytics.
+  accounts or cookies. Visits are counted with cookieless Vercel Web Analytics (page addresses are
+  scrubbed of check IDs and sign-in codes first), and ProveIt keeps private daily totals of links
+  created and results, as plain numbers.
 - [License](LICENSE): source-available, all rights reserved. Reading the code and verifying
   results are allowed; anything else needs my written permission (GitHub [@heissally](https://github.com/heissally) or salamiademola73@gmail.com).

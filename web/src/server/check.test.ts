@@ -63,6 +63,20 @@ describe("POST /api/check", () => {
     expect(stored).toEqual({ result: reply.result, signature: reply.signature });
   });
 
+  it("counts each genuine result as verified or could-not-verify, with no details", async () => {
+    const { call, services } = setup(() => signedResult());
+    await call(request());
+    const keys = [...services.upstash.data.keys()].filter((k) => k.startsWith("proveit:stats:"));
+    expect(keys).toEqual(["proveit:stats:2026-10-04:verified:google"]);
+    expect(services.upstash.data.get(keys[0])).toBe("1");
+  });
+
+  it("does not count a result whose signature fails", async () => {
+    const { call, services } = setup(() => signedResult({}, ethers.Wallet.createRandom()));
+    await call(request());
+    expect([...services.upstash.data.keys()].some((k) => k.startsWith("proveit:stats:"))).toBe(false);
+  });
+
   it("stores genuine 'could not verify' results too", async () => {
     const { call } = setup(() => signedResult({ status: "not_verified", reason: "no_hd" }));
     expect((await call(request())).body).toMatchObject({ ok: true, stored: true });

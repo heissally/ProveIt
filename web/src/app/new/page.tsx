@@ -59,6 +59,8 @@ export default function NewCheck() {
       if (roles.length === 0) return setError("Pick at least one role that counts.");
       check = { method, challengeId, expiresAt, guildId: server.guildId, roles };
     }
+    // Private daily count of links created (just the method, nothing about the check).
+    fetch("/api/stats", { method: "POST", body: JSON.stringify({ event: "link_created", method }), keepalive: true }).catch(() => undefined);
     router.push(askerPath(check));
   }
 

@@ -20,6 +20,8 @@ export function fakeUpstash() {
         return "OK";
       case "GET":
         return data.get(key) ?? null;
+      case "MGET":
+        return [key, ...rest].map((k) => data.get(k) ?? null);
       case "INCR": {
         const n = Number(data.get(key) ?? 0) + 1;
         data.set(key, String(n));
