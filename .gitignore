@@ -7,3 +7,10 @@ node_modules/
 
 .DS_Store
 *.log
+
+# Launch video: local tools, renders and the narrator audio stay on this machine.
+video/.tools/
+video/media/
+video/out/
+video/voice-cache/
+__pycache__/

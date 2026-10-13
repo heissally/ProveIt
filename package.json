@@ -24,7 +24,10 @@
     "secret:encrypt": "node --env-file-if-exists=.env.local scripts/encrypt-secret.ts",
     "action:deploy": "node --env-file-if-exists=.env.local scripts/deploy-action.ts",
     "google:try": "node --env-file-if-exists=.env.local scripts/m3/try-google.ts",
-    "discord:try": "node --env-file-if-exists=.env.local scripts/m4/try-discord.ts"
+    "discord:try": "node --env-file-if-exists=.env.local scripts/m4/try-discord.ts",
+    "video:key": "node scripts/video-key.ts",
+    "video:draft": "sh video/render.sh draft",
+    "video:final": "sh video/render.sh final"
   },
   "devDependencies": {
     "ethers": "5.8.0",
