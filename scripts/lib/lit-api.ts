@@ -8,7 +8,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const LIT_API_BASE = process.env.LIT_API_BASE || "https://api.chipotle.litprotocol.com";
+export const LIT_API_BASE = process.env.LIT_API_BASE || "https://api2.chipotle.litprotocol.com";
 
 /** Absolute path to the repo root, so scripts work from any folder. */
 export const REPO_ROOT = fileURLToPath(new URL("../../", import.meta.url));
