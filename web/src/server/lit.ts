@@ -5,7 +5,7 @@
  * runs it inside the TEE only if our usage key may execute in a group containing
  * that CID. The usage key can't run any other code and can't change any settings.
  */
-export const LIT_ACTION_URL = "https://api.chipotle.litprotocol.com/core/v1/lit_action";
+export const LIT_ACTION_URL = "https://api2.chipotle.litprotocol.com/core/v1/lit_action";
 
 export interface LitRun {
   /** true only if Lit ran the action and the action itself didn't crash */
